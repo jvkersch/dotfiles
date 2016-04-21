@@ -1,0 +1,16 @@
+{
+    "layouts": [
+        "tall",
+        "wide",
+        "fullscreen",
+    ],
+    "increase-main": {
+        "mod": "mod1",
+        "key": ";"
+    },
+    "decrease-main": {
+        "mod": "mod1",
+        "key": "'"
+    },
+    "mouse-follows-focus": true
+}
