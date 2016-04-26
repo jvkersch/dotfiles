@@ -226,6 +226,7 @@
 
 ** ido-mode
 
+
    [[https://www.emacswiki.org/emacs/InteractivelyDoThings][Interactively Do Things]]: typing the first few characters of a buffer to
    switch to or a file to open will narrow down successive choices.
 
