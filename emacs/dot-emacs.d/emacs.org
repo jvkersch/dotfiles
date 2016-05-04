@@ -39,6 +39,17 @@
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
+  Disable C-x C-c to quit emacs, since it is too easy to hit those keys by
+  mistake. To quit emacs, use an explicit M-x kill-emacs.
+
+#+BEGIN_SRC emacs-lisp
+(defun disable-exit-keys ()
+  "Display an error message instead of terminating emacs"
+  (interactive)
+  (message "To exit emacs, use M-x kill-emacs"))
+(global-set-key (kbd "C-x C-c") 'disable-exit-keys)
+#+END_SRC
+
   Show Emacs with a slightly larger screen. I should probably retire this and
   have the window manager take care of this instead.
 
@@ -161,7 +172,7 @@
 
 ** yasnippet
 
-   [[https://github.com/capitaomorte/yasnippet/blob/master/README.mdown][yasnippet]] is a templating system for Emacs. 
+   [[https://github.com/capitaomorte/yasnippet/blob/master/README.mdown][yasnippet]] is a templating system for Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
@@ -304,7 +315,7 @@
 #+END_SRC
 
 ** Magit
-   
+
    Show commit SHA in blame mode.
 
 #+BEGIN_SRC emacs-lisp
@@ -438,7 +449,7 @@
 (setq venv-location (expand-file-name "~/.environments"))
 #+END_SRC
 
-*** Run nosetests from within Emacs 
+*** Run nosetests from within Emacs
 
     Taken from [[[https://bitbucket.org/durin42/nosemacs]]].
 
@@ -458,7 +469,7 @@
 
     Useful default keybindings: C-tab for autocomplete at the point, M-n/M-p to
     scroll through the autocomplete menu.
-    
+
     Setting up Jedi requires a bit of installation, see the top of this file.
 
 #+BEGIN_SRC emacs-lisp
@@ -659,4 +670,41 @@ Rename buffer and file it's visiting; taken from [[ http://steve.yegge.googlepag
           (rename-buffer new-name)
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
+#+END_SRC
+
+** Insert a datetime stamp.
+
+   For a project I had to insert specially formatted datetime stamps of the
+   form "2016-04-28 10:18 UTC+1". The special formatting of the timezone (not
+   "BST" or "+0100") required some custom crafting...
+
+#+BEGIN_SRC emacs-lisp
+(defun utc-offset-hours ()
+  "Return the offset from UTC in hours."
+  (interactive)
+  (let ((offset_sec (car (current-time-zone (current-time)))))
+    (/ offset_sec 3600)))
+
+(defun format-utc-offset-hours ()
+  "Format a string of the form UTC+x or UTC-x with x the UTC offset."
+  (interactive)
+  (format "UTC%+d" (utc-offset-hours)))
+
+;; TODO fold this into insert-current-date-time
+(setq current-date-time-format "%Y-%m-%d %H:%M")
+
+(defun insert-current-date-time ()
+  "insert the current date and time into current buffer."
+  (interactive)
+  (insert
+   (concat
+    (format-time-string current-date-time-format (current-time))
+    " "
+    (format-utc-offset-hours))))
+
+
+(defun yaml-mode-keys ()
+  (local-set-key (kbd "C-c C-d") 'insert-current-date-time))
+(add-hook 'yaml-mode-hook 'yaml-mode-keys)
+
 #+END_SRC
