@@ -72,7 +72,9 @@
 
 #+BEGIN_SRC emacs-lisp
   (setq exec-path
-        (append exec-path '("/usr/local/bin/")))
+        (append exec-path '("/usr/local/bin/"
+                            "/Library/TeX/texbin")))
+(setenv "PATH" "/usr/local/bin:/Library/TeX/texbin/:$PATH" t)
 #+END_SRC
 
 * Fonts
