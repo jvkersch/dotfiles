@@ -103,7 +103,8 @@
     (when ha/fixed-font-family
       (set-frame-font ha/fixed-font-family)
       (set-face-attribute 'default nil :font ha/fixed-font-family :height 160)
-      (set-face-font 'default ha/fixed-font-family))
+      (set-face-font 'default ha/fixed-font-family)
+      (set-face-font 'fixed-pitch ha/fixed-font-family))
   #+END_SRC
 
 
@@ -257,9 +258,20 @@
   this from [[https://github.com/howardabrams/dot-files/blob/master/emacs-mac.org][Howard Abrams]].
 
 #+BEGIN_SRC emacs-lisp
+(defun jvk/org-src-color-blocks-light ()
+  "Colors the block headers and footers to make them stand out more for lighter themes"
+  (interactive)
+  (set-face-attribute 'org-block-begin-line nil
+     :underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")
+  (set-face-attribute 'org-block nil :background "#FFFFEA")
+  (set-face-attribute 'org-block-end-line nil
+     :overline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")
+  (set-face-attribute 'mode-line-buffer-id nil :foreground "#005000" :bold t))
+
 (defun ha/org-src-color-blocks-light ()
   "Colors the block headers and footers to make them stand out more for lighter themes"
   (interactive)
+
   (custom-set-faces
    '(org-block-begin-line
     ((t (:underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF"))))
@@ -290,6 +302,7 @@
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
+(setq custom-safe-themes t)
 (defun jvk/change-theme (theme org-block-style)
   "Change the color scheme"
   (funcall theme)
@@ -297,16 +310,32 @@
 
 (defun jvk/dark-color-theme ()
   "Switch to dark color theme"
+  (interactive)
   (jvk/change-theme 'color-theme-sanityinc-tomorrow-night
                     'ha/org-src-color-blocks-dark))
 
 (defun jvk/light-color-theme ()
   "Switch to light color theme"
+  (interactive)
   (jvk/change-theme 'color-theme-sanityinc-tomorrow-day
-                    'ha/org-src-color-blocks-light))
+                    'jvk/org-src-color-blocks-light))
 
-(jvk/dark-color-theme)
+;(jvk/dark-color-theme)
 (jvk/light-color-theme)
+#+END_SRC
+
+
+Set fonts for org mode and Markdown editing to something proportional (for the
+time being Roboto, the default Android font).
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'markdown-mode-hook 'variable-pitch-mode)
+(add-hook 'org-mode-hook 'variable-pitch-mode)
+(set-face-font 'variable-pitch "Roboto")
+(set-face-attribute 'variable-pitch nil :height 160 :weight 'light)
+(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+;(set-face-attribute 'org-block-background nil :inherit 'fixed-pitch)
 #+END_SRC
 
 

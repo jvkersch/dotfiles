@@ -30,6 +30,7 @@
 (depends-on "org-bullets")
 (depends-on "pallet")
 (depends-on "php-mode")
+(depends-on "swiper")
 (depends-on "undo-tree")
 (depends-on "use-package")
 (depends-on "virtualenvwrapper")
