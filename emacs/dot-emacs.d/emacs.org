@@ -477,7 +477,7 @@ time being Roboto, the default Android font).
 (require 'virtualenvwrapper)
 (venv-initialize-interactive-shells)
 (venv-initialize-eshell)
-(setq venv-location (expand-file-name "~/.environments"))
+(setq venv-location (expand-file-name "~/.edm/envs"))
 #+END_SRC
 
 *** Run nosetests from within Emacs
