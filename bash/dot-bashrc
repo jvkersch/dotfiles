@@ -69,7 +69,7 @@ complete -W "$(_ssh_comp)" ssh
 export PS1="\[$GREEN\]\t\[$RED\]-\[$BLUE\]\u \[$YELLOW\]\[$YELLOW\]\w\[\033[m\]\[$MAGENTA\]\$(__git_ps1)\n\[$WHITE\]\$ "
 
 # Manage SSH keys via keychain script
-rekeychain() { eval $(keychain --eval --quiet -Q --agents ssh --inherit any id_rsa id_rsa_primary) ; ssh-add -l; }
+rekeychain() { eval $(keychain --eval --quiet -Q --agents ssh --inherit any id_rsa_2016) ; ssh-add -l; }
 rekeychain
 
 # Set up pyenv
