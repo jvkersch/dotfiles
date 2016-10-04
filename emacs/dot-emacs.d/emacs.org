@@ -441,11 +441,9 @@ time being Roboto, the default Android font).
 
 (defun add-good-python-path ()
   "Add the path to a decent Python installation."
-  (setq jaguar-path "~/.jaguar/envs/jaguar/bin")
-  (setq python-shell-exec-path
-    (cons jaguar-path python-shell-exec-path))
-  (setq python-check-command
-    (concat (file-name-as-directory jaguar-path) "pyflakes")))
+  (setq edm-path "~/.edm/envs/edm/bin")
+  (add-to-list 'python-shell-exec-path edm-path)
+  (add-to-list 'exec-path edm-path))
 
 (add-hook 'python-mode-hook 'add-good-python-path)
 
