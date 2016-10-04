@@ -345,6 +345,14 @@ time being Roboto, the default Android font).
 (setq tags-table-list '("~/.etags"))
 #+END_SRC
 
+** Shell scripts
+
+   Needs shellcheck to be installed.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'sh-mode-hook 'flycheck-mode)
+#+END_SRC
+
 ** Magit
 
    Show commit SHA in blame mode.
