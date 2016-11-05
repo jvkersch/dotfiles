@@ -11,6 +11,7 @@
 ** Run `cask install` from within .emacs.d folder.
 ** From within Emacs, run "M-x jedi:install-server"
    (uses system Python by default; needs virtualenv)
+** Don't forget to install CC mode from sourceforge (!)
 
 * Package management.
 #+BEGIN_SRC emacs-lisp
@@ -343,6 +344,16 @@ time being Roboto, the default Android font).
 
 #+BEGIN_SRC emacs-lisp
 (setq tags-table-list '("~/.etags"))
+#+END_SRC
+
+** C++ mode
+
+   Use cc mode from Sourceforge.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/cc-mode-5.33")
+(require 'cc-mode)
+(add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
 #+END_SRC
 
 ** Shell scripts
