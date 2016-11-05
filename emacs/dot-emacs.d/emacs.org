@@ -755,4 +755,17 @@ Rename buffer and file it's visiting; taken from [[ http://steve.yegge.googlepag
   (local-set-key (kbd "C-c C-d") 'insert-current-date-time))
 (add-hook 'yaml-mode-hook 'yaml-mode-keys)
 
+(defun jvk/calendar-iso-week-number (&optional date)
+  "ISO week number for a given date, default today."
+  (interactive)
+  (let* ((d (calendar-absolute-from-gregorian
+             (or date (calendar-current-date))))
+         (iso-date (calendar-iso-from-absolute d)))
+    (calendar-extract-month iso-date)))
+
+(defun jvk/calendar-print-iso-week-number ()
+  "Print the ISO week number"
+  (interactive)
+  (message "%d" (jvk/calendar-iso-week-number)))
+
 #+END_SRC
