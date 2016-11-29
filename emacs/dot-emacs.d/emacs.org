@@ -769,3 +769,14 @@ Rename buffer and file it's visiting; taken from [[ http://steve.yegge.googlepag
   (message "%d" (jvk/calendar-iso-week-number)))
 
 #+END_SRC
+
+Replace all carriage returns (^M) by line feed (^J) in a given buffer (makes
+editing logs easier)
+
+#+BEGIN_SRC emacs-lisp
+(defun jvk/remove-cr ()
+  "Replace carriage returns by newlines from current location until end of buffer"
+  (interactive)
+  (while (search-forward "" nil t)
+    (replace-match "\n" nil t)))
+#+END_SRC
