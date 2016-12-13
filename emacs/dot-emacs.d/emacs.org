@@ -109,6 +109,16 @@
       (set-face-font 'fixed-pitch ha/fixed-font-family))
   #+END_SRC
 
+  Customizations for eshell mode (from John D Cook)
+  #+BEGIN_SRC emacs-lisp
+(add-hook 'shell-mode-hook
+  (lambda ()
+    (define-key shell-mode-map (kbd "<M-up>") 'comint-previous-input)
+    (define-key shell-mode-map (kbd "<M-down>") 'comint-next-input)
+  )
+)
+#+END_SRC
+
 
 * Tweaks for editing in Emacs
 
