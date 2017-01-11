@@ -404,6 +404,16 @@ time being Roboto, the default Android font).
   '("\\.m$" . octave-mode))
 #+END_SRC
 
+** C mode
+
+   Display .mod files (ngspice circuit files) in C mode.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list
+  'auto-mode-alist
+  '("\\.mod$" . c-mode))
+#+END_SRC
+
 ** Unix files
 
    Not coding per se, but use [[https://wiki.archlinux.org/index.php/emacs#Syntax_Highlighting_for_Systemd_Files][syntax highlighting for Unix system files]].
