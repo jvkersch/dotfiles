@@ -1,4 +1,4 @@
-#+TITLE: My Emacs configuration file
+#+TITLE: My Emacs configurtion file
 #+AUTHOR: Joris Vankerschaver
 #+EMAIL: joris.vankerschaver@gmail.com
 #+STARTUP: showall
@@ -15,7 +15,7 @@
 
 * Package management.
 #+BEGIN_SRC emacs-lisp
-(require 'cask "/usr/local/share/emacs/site-lisp/cask.el")  ; Homebrew
+(require 'cask "/usr/local/Cellar/cask/0.8.1/cask.el")  ; Homebrew
 (cask-initialize)
 (require 'pallet)
 (pallet-mode t)
@@ -77,6 +77,12 @@
         (append exec-path '("/usr/local/bin/"
                             "/Library/TeX/texbin")))
 (setenv "PATH" "/usr/local/bin:/Library/TeX/texbin/:$PATH" t)
+
+;;; also add our local utilities
+ (setq exec-path
+        (append exec-path '("~/local/bin/")))
+
+
 #+END_SRC
 
 * Fonts
@@ -332,8 +338,8 @@
   (jvk/change-theme 'color-theme-sanityinc-tomorrow-day
                     'jvk/org-src-color-blocks-light))
 
-;(jvk/dark-color-theme)
-(jvk/light-color-theme)
+(jvk/dark-color-theme)
+;(jvk/light-color-theme)
 #+END_SRC
 
 
@@ -364,8 +370,14 @@ time being Roboto, the default Android font).
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/cc-mode-5.33")
 (require 'cc-mode)
-(add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
+(add-hook 'c++-mode-hook 'modern-c++-font-lock-mode)
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+
+(c-set-offset 'innamespace 0)
+#+END_SRC
+
 
 ** Shell scripts
 
@@ -501,6 +513,25 @@ time being Roboto, the default Android font).
     "from __future__ import division, print_function"))
 #+END_SRC
 
+*** Reformat Python imports according to "dense" coding standard
+
+#+BEGIN_SRC emacs-lisp
+(defun py-statement-point-begin ()
+  (python-nav-beginning-of-statement)
+  (point))
+
+(defun py-statement-point-end ()
+  (python-nav-end-of-statement)
+  (point))
+
+(defun jvk/python-reformat-import ()
+  (interactive)
+  (save-excursion
+    (let ((pmin (py-statement-point-begin))
+          (pmax (py-statement-point-end)))
+      (shell-command-on-region pmin pmax "/Users/jvkersch/local/bin/cleanup-import-statement.py" nil t))))
+#+END_SRC
+
 *** Insert ipdb snippet at the prompt.
 
     TODO This can probably be done much more efficiently with yasnippet.
@@ -623,8 +654,8 @@ time being Roboto, the default Android font).
 #+BEGIN_SRC emacs-lisp
 
 ;; Use the version of Tuareg installed through opam
-(add-to-list 'load-path "/Users/jvkersch/.opam/4.02.3/share/emacs/site-lisp/")
-(load "/Users/jvkersch/.opam/4.02.3/share/emacs/site-lisp/tuareg-site-file")
+;(add-to-list 'load-path "/Users/jvkersch/.opam/4.02.3/share/emacs/site-lisp/")
+;(load "/Users/jvkersch/.opam/4.02.3/share/emacs/site-lisp/tuareg-site-file")
 
 #+END_SRC
 

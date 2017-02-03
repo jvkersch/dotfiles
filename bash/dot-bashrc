@@ -62,8 +62,15 @@ _ssh_comp() {
 complete -W "$(_ssh_comp)" ssh
 
 # Git setup.
-[[ -f ~/local/etc/git-completion.bash ]] && . ~/local/etc/git-completion.bash
-[[ -f ~/local/etc/git-prompt.sh ]] && .  ~/local/etc/git-prompt.sh
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+  . $(brew --prefix)/etc/bash_completion
+fi
+
+if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
+  __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
+  source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
+fi
+
 
 # Fix horrible colors below.
 export PS1="\[$GREEN\]\t\[$RED\]-\[$BLUE\]\u \[$YELLOW\]\[$YELLOW\]\w\[\033[m\]\[$MAGENTA\]\$(__git_ps1)\n\[$WHITE\]\$ "
