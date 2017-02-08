@@ -110,7 +110,7 @@
 
     (when ha/fixed-font-family
       (set-frame-font ha/fixed-font-family)
-      (set-face-attribute 'default nil :font ha/fixed-font-family :height 160)
+      (set-face-attribute 'default nil :font ha/fixed-font-family :height 140)
       (set-face-font 'default ha/fixed-font-family)
       (set-face-font 'fixed-pitch ha/fixed-font-family))
   #+END_SRC
