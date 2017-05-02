@@ -84,3 +84,5 @@ eval "$(pyenv init -)"
 
 # Fix up locale. For some reason Mac OS doesn't do this right.
 export LC_CTYPE="nl_BE.UTF-8"
+
+alias killgp="sudo killall GlobalProtect && sudo killall PanGPS"
