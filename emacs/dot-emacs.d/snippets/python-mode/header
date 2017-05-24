@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: header statements
+# key: hdr
+# group: best practices
+# --
+# -*- coding: utf-8 -*-
+from __future__ import division, print_function

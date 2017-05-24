@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: traceback print_stack
+# key: tb
+# group: debugging
+# --
+import traceback
+print('*'*79)
+traceback.print_stack()
+print('*'*79)

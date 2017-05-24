@@ -195,9 +195,8 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
-    :config
-    (yas-global-mode 1))
-
+    :config (yas-global-mode 1)
+    :bind (("M-<tab>" . yas-expand)))
 #+END_SRC
 
 ** undo-tree
@@ -503,12 +502,6 @@ time being Roboto, the default Android font).
 (eval-after-load "python"
   '(progn
      (define-key python-mode-map (kbd "C-c C-r") 'python-shell-send-region)))
-
-; Set up a register with typical Python preamble
-; TODO Add this to the python-mode hook
-(set-register ?p '(
-    "# -*- coding: utf-8 -*-\n"
-    "from __future__ import division, print_function"))
 #+END_SRC
 
 *** Reformat Python imports according to "dense" coding standard
@@ -528,23 +521,6 @@ time being Roboto, the default Android font).
     (let ((pmin (py-statement-point-begin))
           (pmax (py-statement-point-end)))
       (shell-command-on-region pmin pmax "/Users/jvkersch/local/bin/cleanup-import-statement.py" nil t))))
-#+END_SRC
-
-*** Insert ipdb snippet at the prompt.
-
-    TODO This can probably be done much more efficiently with yasnippet.
-
-#+BEGIN_SRC emacs-lisp
-(defun insert-ipdb-statement ()
-  (interactive)
-  (insert "import ipdb; ipdb.set_trace()"))
-
-(defun my-python-stuff ()
-  "My customizations for Python mode"
-  (interactive)
-  (local-set-key (kbd "C-c i") 'insert-ipdb-statement))
-
-(add-hook 'python-mode-hook 'my-python-stuff)
 #+END_SRC
 
 *** Manage virtual environments from within Emacs
