@@ -24,6 +24,7 @@
 (depends-on "jedi")
 (depends-on "json-mode")
 (depends-on "julia-mode")
+(depends-on "kotlin-mode")
 (depends-on "magit")
 (depends-on "markdown-mode")
 (depends-on "modern-cpp-font-lock")
