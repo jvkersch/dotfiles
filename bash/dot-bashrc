@@ -71,9 +71,8 @@ if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
   source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
 fi
 
-
 # Fix horrible colors below.
-export PS1="\[$GREEN\]\t\[$RED\]-\[$BLUE\]\u \[$YELLOW\]\[$YELLOW\]\w\[\033[m\]\[$MAGENTA\]\$(__git_ps1)\n\[$WHITE\]\$ "
+#export PS1="\[$GREEN\]\t\[$RED\]-\[$BLUE\]\u \[$YELLOW\]\[$YELLOW\]\w\[\033[m\]\[$MAGENTA\]\$(__git_ps1)\n\[$WHITE\]\$ "
 
 # Manage SSH keys via keychain script
 rekeychain() { eval $(keychain --eval --quiet -Q --agents ssh --inherit any id_rsa_2016) ; ssh-add -l; }
@@ -85,4 +84,11 @@ eval "$(pyenv init -)"
 # Fix up locale. For some reason Mac OS doesn't do this right.
 export LC_CTYPE="nl_BE.UTF-8"
 
+# Manage the (very persistent) GlobalProtect VPN client.
 alias killgp="sudo killall GlobalProtect && sudo killall PanGPS"
+
+# Linux-specific stuff
+if [[ $(uname) == "Linux" ]]; then
+    alias pbcopy='xclip -selection clipboard'
+    alias pbpaste='xclip -selection clipboard -o'
+fi
