@@ -49,12 +49,6 @@ export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
 export WORKON_HOME=~/.environments
 [[ -f /usr/local/bin/virtualenvwrapper.sh ]] && . /usr/local/bin/virtualenvwrapper.sh
 
-# Autocomplete for Google cloud SDK
-gcloud_sdk_path=${HOME}/google-cloud-sdk
-for i in {path,completion}.bash.inc; do
-    [[ -f ${gcloud_sdk_path}/${i} ]] && . ${gcloud_sdk_path}/${i}
-done
-
 # SSH autocomplete
 _ssh_comp() {
     perl -ne 'print "$1 " if /^Host (.+)$/' ~/.ssh/config
@@ -63,12 +57,12 @@ complete -W "$(_ssh_comp)" ssh
 
 # Git setup.
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
-  . $(brew --prefix)/etc/bash_completion
+    . $(brew --prefix)/etc/bash_completion
 fi
 
 if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
-  __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
-  source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
+    __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
+    source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
 fi
 
 # Fix horrible colors below.
