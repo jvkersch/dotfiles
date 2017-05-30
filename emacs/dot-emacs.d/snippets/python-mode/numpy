@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: numpy
+# key: np
+# group: scientific
+# --
+import numpy as np

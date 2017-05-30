@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: matplotlib
+# key: plt
+# group: scientific
+# --
+import matplotlib.pyplot as plt
