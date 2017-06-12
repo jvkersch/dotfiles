@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: header with current date
+# key: dtheader
+# group: daynotes
+# --
+#+TITLE: `(insert (format-time-string "%Y-%m-%d"))`
+#+STARTUP: showall

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: numpytest
+# key: nptest
+# group: scientific
+# --
+import numpy.testing as nptest
