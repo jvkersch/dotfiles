@@ -630,7 +630,7 @@ time being Roboto, the default Android font).
 ;; Use the version of Tuareg installed through opam
 ;(add-to-list 'load-path "/Users/jvkersch/.opam/4.02.3/share/emacs/site-lisp/")
 ;(load "/Users/jvkersch/.opam/4.02.3/share/emacs/site-lisp/tuareg-site-file")
-
+(load "/Users/jvkersch/.opam/system/share/emacs/site-lisp/tuareg-site-file")
 #+END_SRC
 
 
@@ -733,6 +733,29 @@ This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
 (org-clock-persistence-insinuate)
 
 #+END_SRC
+
+** daynotes
+
+#+BEGIN_SRC elisp
+(setq daynote-folder
+      (expand-file-name "~/Dropbox/writing/daynotes"))
+
+(defun jvk/joinpath (&rest paths)
+  "Join a sequence of path components, inserting the appropriate separator"
+  (let ((file (nth (1- (length paths)) paths))
+        (folders (butlast paths 1)))
+    (concat (mapconcat 'file-name-as-directory folders "") file)))
+
+(defun jvk/open-daynote ()
+  "Create or open a day note for today"
+  (interactive)
+  (let* ((ct (current-time))
+         (year (format-time-string "%Y" ct))
+         (ymd (format-time-string "%Y-%m-%d" ct))
+         (fname (jvk/joinpath daynote-folder year (concat ymd ".org"))))
+    (find-file fname)))
+#+END_SRC
+
 
 * Miscellaneous elisp snippets.
 
