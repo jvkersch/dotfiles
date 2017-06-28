@@ -737,7 +737,7 @@ This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
 ** daynotes
 
 #+BEGIN_SRC elisp
-(setq daynote-folder
+(setq jvk/daynote-folder
       (expand-file-name "~/Dropbox/writing/daynotes"))
 
 (defun jvk/joinpath (&rest paths)
@@ -752,7 +752,7 @@ This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
   (let* ((ct (current-time))
          (year (format-time-string "%Y" ct))
          (ymd (format-time-string "%Y-%m-%d" ct))
-         (fname (jvk/joinpath daynote-folder year (concat ymd ".org"))))
+         (fname (jvk/joinpath jvk/daynote-folder year (concat ymd ".org"))))
     (find-file fname)))
 #+END_SRC
 
