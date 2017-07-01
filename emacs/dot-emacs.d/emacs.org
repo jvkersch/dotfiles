@@ -663,6 +663,15 @@ gebruik ik Skim, en stel ik de editor in de preferences in als
     (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)))
 #+END_SRC
 
+** JSX mode (react)
+
+
+#+BEGIN_SRC emacs-lisp
+;(add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode))
+
+(require 'rjsx-mode)
+#+END_SRC
+
 * Org-mode
 
 This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
