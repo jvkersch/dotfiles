@@ -745,7 +745,7 @@ This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
 
 ** daynotes
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
 (setq jvk/daynote-folder
       (expand-file-name "~/Dropbox/writing/daynotes"))
 
