@@ -1,4 +1,4 @@
-#+TITLE: My Emacs configurtion file
+#+TITLE: My Emacs configuration file
 #+AUTHOR: Joris Vankerschaver
 #+EMAIL: joris.vankerschaver@gmail.com
 #+STARTUP: showall
