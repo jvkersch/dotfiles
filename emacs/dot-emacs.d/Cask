@@ -18,6 +18,7 @@
 (depends-on "geiser")
 (depends-on "go-mode")
 (depends-on "go-play")
+(depends-on "grin")
 (depends-on "haskell-mode")
 (depends-on "hungry-delete")
 (depends-on "jabber")
