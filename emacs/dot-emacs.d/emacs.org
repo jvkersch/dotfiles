@@ -17,11 +17,14 @@
   (cask-initialize)
   (require 'pallet)
   (pallet-mode t)
-   
-  (server-start)
   #+END_SRC
 
+
 * Setting up Emacs core
+
+  #+BEGIN_SRC emacs-lisp
+  (server-start)
+  #+END_SRC
 
   #+BEGIN_SRC emacs-lisp
   (setq user-full-name "Joris Vankerschaver"
