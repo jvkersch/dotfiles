@@ -19,6 +19,14 @@
   (pallet-mode t)
   #+END_SRC
 
+  For things that are not in Melpa, I use git submodules under ~/.emacs.d/modules.
+
+  #+BEGIN_SRC emacs-lisp
+  (setq plugin-path (expand-file-name "modules"))
+
+  (add-to-list 'load-path (expand-file-name "ini.el" plugin-path))
+  (require 'ini)
+  #+END_SRC
 
 * Setting up Emacs core
 
@@ -365,7 +373,8 @@ time being Roboto, the default Android font).
 
 ** C++ mode
 
-   Use cc mode from Sourceforge.
+   Use cc mode from Sourceforge. TODO: replace this with a GitHub mirror so that
+   I can pull it in via git submodule
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/cc-mode-5.33")
