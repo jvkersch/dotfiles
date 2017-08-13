@@ -34,6 +34,13 @@ export EDITOR=emacsclient
 
 canopy() { . ~/Library/Enthought/Canopy_64bit/User/bin/activate; }
 my_ocaml() { . /Users/jvkersch/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true; }
+new_gcc() {
+    GCC_PATH="/usr/local/Cellar/gcc/7.1.0/bin/"
+    export PATH="$GCC_PATH:$PATH"
+    alias g++=g++-7
+    alias gcc=gcc-7
+}
+
 
 function my_java() {
     JUNIT_HOME="$HOME/local/junit"
@@ -87,3 +94,4 @@ if [[ $(uname) == "Linux" ]]; then
     alias pbcopy='xclip -selection clipboard'
     alias pbpaste='xclip -selection clipboard -o'
 fi
+
