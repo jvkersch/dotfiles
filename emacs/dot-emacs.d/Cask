@@ -39,5 +39,6 @@
 (depends-on "undo-tree")
 (depends-on "use-package")
 (depends-on "virtualenvwrapper")
+(depends-on "windresize")
 (depends-on "yaml-mode")
 (depends-on "yasnippet")
