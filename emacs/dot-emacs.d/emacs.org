@@ -3,19 +3,15 @@
 #+EMAIL: joris.vankerschaver@gmail.com
 #+STARTUP: showall
 
-* TODO elpy has a helpful feature that replaces if __name__ == '__main__' in Python scripts into a no-op (see https://github.com/jorgenschaefer/elpy/issues/69). I don't particularly care for this behavior, so set C-c C-c to calll the prefix form C-u C-c C-c by default.
-
 * Installation instructions
-** Make sure cask.el path refers to existing file
-   (TODO: Make this platform independent)
 ** Run `cask install` from within .emacs.d folder.
 ** From within Emacs, run "M-x jedi:install-server"
    (uses system Python by default; needs virtualenv)
-** Don't forget to install CC mode from sourceforge (!)
+** (Optionally) install a newer CC mode from sourceforge
 
 * Package management.
   #+BEGIN_SRC emacs-lisp
-  (require 'cask "/usr/local/Cellar/cask/0.8.1/cask.el")  ; Homebrew
+  (require 'cask (expand-file-name "~/.cask/cask.el"))
   (cask-initialize)
   (require 'pallet)
   (pallet-mode t)
@@ -26,8 +22,8 @@
   #+BEGIN_SRC emacs-lisp
   (setq plugin-path (expand-file-name "modules"))
 
-  (add-to-list 'load-path (expand-file-name "ini.el" plugin-path))
-  (require 'ini)
+  ;;(add-to-list 'load-path (expand-file-name "ini.el" plugin-path))
+  ;;(require 'ini)
   #+END_SRC
 
 * Setting up Emacs core
@@ -400,6 +396,11 @@ time being Roboto, the default Android font).
 
 ** Magit
 
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-g M-s") 'magit-status)
+(global-set-key (kbd "M-g M-c") 'magit-checkout)
+#+END_SRC
+
    Show commit SHA in blame mode.
 
 #+BEGIN_SRC emacs-lisp
@@ -638,17 +639,6 @@ time being Roboto, the default Android font).
 (add-hook 'c++-mode-hook 'c-hook)
 
 #+END_SRC
-
-** OCaml
-
-#+BEGIN_SRC emacs-lisp
-
-;; Use the version of Tuareg installed through opam
-;(add-to-list 'load-path "/Users/jvkersch/.opam/4.02.3/share/emacs/site-lisp/")
-;(load "/Users/jvkersch/.opam/4.02.3/share/emacs/site-lisp/tuareg-site-file")
-(load "/Users/jvkersch/.opam/system/share/emacs/site-lisp/tuareg-site-file")
-#+END_SRC
-
 
 ** Latex
 

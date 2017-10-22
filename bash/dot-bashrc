@@ -1,13 +1,12 @@
 #!/bin/bash
 
-export GOPATH="$HOME/projects/go"
-
-PATH="/usr/local/bin:/usr/local/opt/ruby/bin:$PATH:/Users/jvkersch/local/bin"
-PATH="/usr/local/sbin:$PATH"
-PATH="/Users/jvkersch/.cask/bin:$PATH"
-PATH="$PATH:$GOPATH/bin"
-PATH="$PATH:/Applications/Postgres.app/Contents/Versions/9.4/bin"
+# Local utilities, including eg. stuff installed by Homebrew
+PATH="$PATH:/usr/local/bin"
+# User-specific executables
+PATH="$PATH:$HOME/local/bin"
+# Miscellaneous (should properly speaking go in $HOME/local)
 PATH="$PATH:$HOME/miniconda3/bin"
+PATH="$PATH:$HOME/.cask/bin"
 export PATH="$PATH"
 
 # Store a record of where we were before changing directory.
@@ -32,30 +31,17 @@ export EDITOR=emacsclient
 
 # Specific programming environments
 
+# TODO: this is mac-specific
 canopy() { . ~/Library/Enthought/Canopy_64bit/User/bin/activate; }
-my_ocaml() { . /Users/jvkersch/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true; }
-new_gcc() {
-    GCC_PATH="/usr/local/Cellar/gcc/7.1.0/bin/"
-    export PATH="$GCC_PATH:$PATH"
-    alias g++=g++-7
-    alias gcc=gcc-7
-}
 
-
-function my_java() {
-    JUNIT_HOME="$HOME/local/junit"
-    export CLASSPATH="$CLASSPATH:$JUNIT_HOME/junit.jar:$JUNIT_HOME/hamcrest.jar"
-    export SBT_OPTS="-XX:MaxPermSize=256m"
-}
-
-# Don't check docstrings, pyflakes.
+# Don't check docstrings (pyflakes)
 export PYFLAKES_NODOCTEST=1
 
-# Setup for virtualenvwrapper
-export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python2
-export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
-export WORKON_HOME=~/.environments
-[[ -f /usr/local/bin/virtualenvwrapper.sh ]] && . /usr/local/bin/virtualenvwrapper.sh
+# Setup for virtualenvwrapper (obsolete with move to EDM/conda)
+#export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python2
+#export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
+#export WORKON_HOME=~/.environments
+#[[ -f /usr/local/bin/virtualenvwrapper.sh ]] && . /usr/local/bin/virtualenvwrapper.sh
 
 # SSH autocomplete
 _ssh_comp() {
@@ -64,24 +50,13 @@ _ssh_comp() {
 complete -W "$(_ssh_comp)" ssh
 
 # Git setup.
-if [ -f $(brew --prefix)/etc/bash_completion ]; then
-    . $(brew --prefix)/etc/bash_completion
-fi
+GIT_PROMPT_ONLY_IN_REPO=1
+source ~/src/jvkersch/dotfiles/bash/bash-git-prompt/gitprompt.sh
 
-if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
-    __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
-    source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
-fi
-
-# Fix horrible colors below.
-#export PS1="\[$GREEN\]\t\[$RED\]-\[$BLUE\]\u \[$YELLOW\]\[$YELLOW\]\w\[\033[m\]\[$MAGENTA\]\$(__git_ps1)\n\[$WHITE\]\$ "
-
-# Manage SSH keys via keychain script
-rekeychain() { eval $(keychain --eval --quiet -Q --agents ssh --inherit any id_rsa_2016) ; ssh-add -l; }
-rekeychain
-
-# Set up pyenv
-eval "$(pyenv init -)"
+# Manage SSH keys via keychain script. This asks for user inpt and so should
+# not be run automatically (otherwise it'll interfere with e.g. X session
+# manager)
+rekeychain() { eval $(keychain --eval --quiet -Q --agents ssh --inherit any id_ecdsa_linux_2017) ; ssh-add -l; }
 
 # Fix up locale. For some reason Mac OS doesn't do this right.
 export LC_CTYPE="nl_BE.UTF-8"
