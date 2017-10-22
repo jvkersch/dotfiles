@@ -15,7 +15,7 @@
 
 * Package management.
   #+BEGIN_SRC emacs-lisp
-  (require 'cask "/usr/local/Cellar/cask/0.8.1/cask.el")  ; Homebrew
+  (require 'cask (expand-file-name "~/.cask/cask.el"))
   (cask-initialize)
   (require 'pallet)
   (pallet-mode t)
@@ -26,8 +26,8 @@
   #+BEGIN_SRC emacs-lisp
   (setq plugin-path (expand-file-name "modules"))
 
-  (add-to-list 'load-path (expand-file-name "ini.el" plugin-path))
-  (require 'ini)
+  ;;(add-to-list 'load-path (expand-file-name "ini.el" plugin-path))
+  ;;(require 'ini)
   #+END_SRC
 
 * Setting up Emacs core
@@ -638,17 +638,6 @@ time being Roboto, the default Android font).
 (add-hook 'c++-mode-hook 'c-hook)
 
 #+END_SRC
-
-** OCaml
-
-#+BEGIN_SRC emacs-lisp
-
-;; Use the version of Tuareg installed through opam
-;(add-to-list 'load-path "/Users/jvkersch/.opam/4.02.3/share/emacs/site-lisp/")
-;(load "/Users/jvkersch/.opam/4.02.3/share/emacs/site-lisp/tuareg-site-file")
-(load "/Users/jvkersch/.opam/system/share/emacs/site-lisp/tuareg-site-file")
-#+END_SRC
-
 
 ** Latex
 
