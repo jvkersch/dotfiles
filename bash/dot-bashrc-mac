@@ -53,7 +53,7 @@ _ssh_comp() {
 complete -W "$(_ssh_comp)" ssh
 
 # Git setup.
-GIT_PROMPT_ONLY_IN_REPO=1
+#GIT_PROMPT_ONLY_IN_REPO=1
 source ~/src/jvkersch/dotfiles/bash/bash-git-prompt/gitprompt.sh
 
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
