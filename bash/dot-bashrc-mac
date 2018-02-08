@@ -64,9 +64,6 @@ fi
 # Fix up locale. For some reason Mac OS doesn't do this right.
 export LC_CTYPE="nl_BE.UTF-8"
 
-# Manage the (very persistent) GlobalProtect VPN client.
-alias killgp="sudo killall GlobalProtect && sudo killall PanGPS"
-
 # Linux-specific stuff
 if [[ $(uname) == "Linux" ]]; then
     alias pbcopy='xclip -selection clipboard'
@@ -82,3 +79,6 @@ fi
 # not be run automatically (otherwise it'll interfere with e.g. X session
 # manager)
 rekeychain() { eval $(keychain --eval --quiet -Q --agents ssh --inherit any "$KEY_NAME") ; ssh-add -l; }
+
+# Convenient aliases
+alias nb="jupyter notebook"
