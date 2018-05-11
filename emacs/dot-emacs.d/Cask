@@ -37,6 +37,7 @@
 (depends-on "rjsx-mode")
 (depends-on "rust-mode")
 (depends-on "swiper")
+(depends-on "tuareg")
 (depends-on "undo-tree")
 (depends-on "use-package")
 (depends-on "virtualenvwrapper")

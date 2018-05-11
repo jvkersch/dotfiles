@@ -12,9 +12,6 @@ export PATH="$PATH"
 
 export GOPATH="$HOME/projects/go"
 
-# Store a record of where we were before changing directory.
-function cd() { export PREVIOUS=$(pwd) && builtin cd "$@"; }
-
 # Unlimited history + timestamps
 export HISTFILESIZE=
 export HISTSIZE=
@@ -32,19 +29,8 @@ alias gbr="git bisect reset"
 
 export EDITOR=emacsclient
 
-# Specific programming environments
-
-# TODO: this is mac-specific
-canopy() { . ~/Library/Enthought/Canopy_64bit/User/bin/activate; }
-
 # Don't check docstrings (pyflakes)
 export PYFLAKES_NODOCTEST=1
-
-# Setup for virtualenvwrapper (obsolete with move to EDM/conda)
-#export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python2
-#export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
-#export WORKON_HOME=~/.environments
-#[[ -f /usr/local/bin/virtualenvwrapper.sh ]] && . /usr/local/bin/virtualenvwrapper.sh
 
 # SSH autocomplete
 _ssh_comp() {
@@ -59,10 +45,6 @@ source ~/src/jvkersch/dotfiles/bash/bash-git-prompt/gitprompt.sh
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
   . $(brew --prefix)/etc/bash_completion
 fi
-
-
-# Fix up locale. For some reason Mac OS doesn't do this right.
-export LC_CTYPE="nl_BE.UTF-8"
 
 # Linux-specific stuff
 if [[ $(uname) == "Linux" ]]; then
@@ -82,3 +64,7 @@ rekeychain() { eval $(keychain --eval --quiet -Q --agents ssh --inherit any "$KE
 
 # Convenient aliases
 alias nb="jupyter notebook"
+alias mi="edm shell -e microbiome"
+alias bd="edm shell -e bacterial-database"
+
+alias hatcher="hatcher --url https://packages.enthought.com"
