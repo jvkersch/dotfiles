@@ -1,0 +1,22 @@
+- name: make config directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "~/.config/i3"
+    - "~/.config/i3status"
+
+- name: install config/source files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  check_mode: no
+  loop:
+    - { src: i3-config, dest: "~/.config/i3/config" }
+    - { src: status_helper.go, dest: "~/.config/i3status/" }
+    
+- name: compile status helper
+  command: go build status_helper.go
+  args:
+    chdir: "~/.config/i3status"
+    creates: "~/.config/i3status/status_helper"

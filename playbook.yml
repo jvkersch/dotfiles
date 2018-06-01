@@ -6,3 +6,4 @@
     - { role: emacs, tags: ['linux', 'macos'] }
     - { role: amethyst, tags: ['linux', 'macos'] }
     - { role: xorg, tags: ['linux'] }
+    - { role: i3, tags: ['linux'] }
