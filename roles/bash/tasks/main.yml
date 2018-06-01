@@ -1,0 +1,8 @@
+- name: install dotfiles
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  check_mode: no
+  loop:
+    - { src: dot-bash_profile, dest: ~/.bash_profile }
+    - { src: dot-bashrc, dest: ~/.bashrc }
