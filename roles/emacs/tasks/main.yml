@@ -1,0 +1,10 @@
+- name: copy emacs.d
+  synchronize:
+    src: dot-emacs.d/
+    dest: "~/.emacs.d/"
+  
+- name: run cask
+  command: cask install
+  args:
+    chdir: "~/.emacs.d"
+    creates: "~/.emacs.d/.cask"
