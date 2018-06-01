@@ -2,6 +2,7 @@
 - hosts: 127.0.0.1
   connection: local
   roles:
-    - bash
-    - emacs
-    - amethyst
+    - { role: bash, tags: ['linux', 'macos'] }
+    - { role: emacs, tags: ['linux', 'macos'] }
+    - { role: amethyst, tags: ['linux', 'macos'] }
+    - { role: xorg, tags: ['linux'] }

@@ -1,0 +1,9 @@
+- name: install dotfiles
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  check_mode: no
+  loop:
+    - { src: dot-xbindkeysrc, dest: "~/.xbindkeysrc" }
+    - { src: dot-xinitrc, dest: "~/.xinitrc" }
+    - { src: dot-xprofile, dest: "~/.xprofile" }
