@@ -1,6 +1,3 @@
 [submodule "emacs/dot-emacs.d/modules/ini.el"]
 	path = emacs/dot-emacs.d/modules/ini.el
 	url = https://github.com/daniel-ness/ini.el
-[submodule "bash/bash-git-prompt"]
-	path = bash/bash-git-prompt
-	url = https://github.com/magicmonty/bash-git-prompt
