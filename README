@@ -1,1 +1,6 @@
-Collection of dotfiles + install script using GNU stow.
+Collection of dotfiles.
+
+Install with one of
+
+  ansible-playbook playbook.yml --tags linux
+  ansible-playbook playbook.yml --tags macos
