@@ -4,6 +4,7 @@
   roles:
     - { role: bash, tags: ['linux', 'macos'] }
     - { role: emacs, tags: ['linux', 'macos'] }
-    - { role: amethyst, tags: ['linux', 'macos'] }
+    - { role: python, tags: ['linux', 'macos'] }
+    - { role: amethyst, tags: ['macos'] }
     - { role: xorg, tags: ['linux'] }
     - { role: i3, tags: ['linux'] }
