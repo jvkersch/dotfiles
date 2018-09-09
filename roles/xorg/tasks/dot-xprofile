@@ -3,3 +3,8 @@ export QT_IM_MODULE='uim'
 uim-xim &
 export XMODIFIERS='@im=uim'
 uim-toolbar-gtk-systray &
+
+DROPBOXD="$HOME/.dropbox-dist/dropboxd"
+if [ -f "$DROPBOXD" ]; then
+    $DROPBOXD &
+fi
