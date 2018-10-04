@@ -70,3 +70,5 @@ alias mi="edm shell -e microbiome"
 alias bd="edm shell -e bacterial-database"
 
 alias hatcher="hatcher --url https://packages.enthought.com"
+
+alias utt="~/.edm/envs/edm/bin/utt"
