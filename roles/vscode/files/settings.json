@@ -1,0 +1,10 @@
+{
+	"python.venvPath": "~/.edm/envs",
+	"python.unitTest.unittestEnabled": true,
+	"python.linting.flake8Enabled": true,
+	"python.linting.pylintEnabled": false,
+	"editor.minimap.enabled": false,
+	"files.trimTrailingWhitespace": true,
+	"files.insertFinalNewline": true,
+	"breadcrumbs.enabled": true
+}
