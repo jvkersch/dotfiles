@@ -4,14 +4,17 @@
   pre_tasks:
     - set_fact:
         is_darwin: ansible_os_family|lower == 'darwin'
+      tags: ['linux', 'macos']  # XXX
     - block:
         - debug:
             msg: "Running on mac OS"
       when: is_darwin
+      tags: ['linux', 'macos']  # XXX
     - block:
         - debug:
             msg: "Running on Linux"
       when: not is_darwin
+      tags: ['linux', 'macos']  # XXX
           
   roles:
     - { role: bash, tags: ['linux', 'macos'] }
