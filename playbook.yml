@@ -1,6 +1,18 @@
 ---
 - hosts: 127.0.0.1
   connection: local
+  pre_tasks:
+    - set_fact:
+        is_darwin: ansible_os_family|lower == 'darwin'
+    - block:
+        - debug:
+            msg: "Running on mac OS"
+      when: is_darwin
+    - block:
+        - debug:
+            msg: "Running on Linux"
+      when: not is_darwin
+          
   roles:
     - { role: bash, tags: ['linux', 'macos'] }
     - { role: emacs, tags: ['linux', 'macos'] }
