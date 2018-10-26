@@ -254,7 +254,7 @@
 ;   M-p <num>            Jump to window <num>
 ;   C-u M-p <num>        Switch current window and <num>
 ;   C-u C-u M-p <num>    Delete window <num>
-;(global-set-key (kbd "M-p") 'ace-window)
+(global-set-key (kbd "M-o") 'ace-window)
 
 (setq enable-recursive-minibuffers t)
 (minibuffer-depth-indicate-mode 1)
