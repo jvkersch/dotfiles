@@ -21,5 +21,5 @@
     - { role: emacs, tags: ['linux', 'macos'] }
     - { role: python, tags: ['linux', 'macos'] }
     - { role: amethyst, tags: ['macos'] }
-    - { role: xorg, tags: ['linux'] }
-    - { role: i3, tags: ['linux'] }
+      #- { role: xorg, tags: ['linux'] }
+      #- { role: i3, tags: ['linux'] }
