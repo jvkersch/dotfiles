@@ -5,6 +5,7 @@ PATH="$PATH:/usr/local/bin"
 # User-specific executables
 PATH="$PATH:$HOME/local/bin"
 # Miscellaneous (should properly speaking go in $HOME/local)
+PATH="$PATH:$HOME/.edm/bin"
 PATH="$PATH:$HOME/miniconda3/bin"
 PATH="$PATH:$HOME/.cask/bin"
 PATH="$PATH:/usr/local/opt/go/libexec/bin"
@@ -66,9 +67,9 @@ rekeychain() { eval $(keychain --eval --quiet -Q --agents ssh --inherit any "$KE
 
 # Convenient aliases
 alias nb="jupyter notebook"
-alias mi="edm shell -e microbiome"
+alias mi="edm shell -e microbiome-dev"
+alias mg="edm shell -e metagenome"
 alias bd="edm shell -e bacterial-database"
 
 alias hatcher="hatcher --url https://packages.enthought.com"
-
 alias utt="~/.edm/envs/edm/bin/utt"
