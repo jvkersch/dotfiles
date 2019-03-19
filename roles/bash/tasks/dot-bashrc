@@ -41,6 +41,16 @@ complete -W "$(_ssh_comp)" ssh
 #GIT_PROMPT_ONLY_IN_REPO=1
 source ~/src/jvkersch/dotfiles/3rdparty/bash-git-prompt/gitprompt.sh
 
+# Disable git prompt (useful for big repos) by adding "GIT_PROMPT_IGNORE=1" to
+# a .bash-git-rc file in the repository root
+function disable_git_prompt() {
+    local repo=$(git rev-parse --show-toplevel 2> /dev/null)
+    if [[ -e "$repo" ]]; then
+        echo "GIT_PROMPT_IGNORE=1" >> "$repo/.bash-git-rc"
+        echo ".bash-git-rc" >> "$repo/.git/info/exclude"
+    fi
+}
+
 
 # Linux-specific stuff
 if [[ $(uname) == "Linux" ]]; then
