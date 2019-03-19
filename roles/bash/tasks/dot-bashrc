@@ -92,3 +92,5 @@ if [ -f '/home/jvankerschaver/local/google-cloud-sdk/path.bash.inc' ]; then . '/
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/home/jvankerschaver/local/google-cloud-sdk/completion.bash.inc' ]; then . '/home/jvankerschaver/local/google-cloud-sdk/completion.bash.inc'; fi
+
+export WORKON_HOME="$HOME/.edm/envs"
