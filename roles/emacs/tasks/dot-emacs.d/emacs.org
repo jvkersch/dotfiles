@@ -367,7 +367,7 @@ time being Roboto, the default Android font).
 * Coding modes
 
 #+BEGIN_SRC emacs-lisp
-(setq tags-table-list '("~/.etags"))
+;;(setq tags-table-list '("~/.etags"))
 #+END_SRC
 
 ** C++ mode
@@ -460,27 +460,27 @@ time being Roboto, the default Android font).
    buffers.
 
 #+BEGIN_SRC emacs-lisp
-(setq whitespace-style '(face empty tabs tab-mark lines-tail))
-(defun coding-hook ()
-  "Enable things that are convenient across all coding buffers."
-  (column-number-mode t)
-  (setq indent-tabs-mode nil)
-  ;; (auto-fill-mode)
-  (whitespace-mode)
-  (hungry-delete-mode)
-  ;; (flycheck-mode)
-  ;; (fci-mode)
-  )
-
-(add-hook 'c-mode-common-hook   'coding-hook)
-(add-hook 'sh-mode-hook         'coding-hook)
-(add-hook 'js-mode-hook         'coding-hook)
-(add-hook 'java-mode-hook       'coding-hook)
-(add-hook 'lisp-mode-hook       'coding-hook)
-(add-hook 'emacs-lisp-mode-hook 'coding-hook)
-(add-hook 'makefile-mode-hook   'coding-hook)
-(add-hook 'latex-mode-hook      'coding-hook)
-(add-hook 'python-mode-hook     'coding-hook)
+;;(setq whitespace-style '(face empty tabs tab-mark lines-tail))
+;;(defun coding-hook ()
+;;  "Enable things that are convenient across all coding buffers."
+;;  (column-number-mode t)
+;;  (setq indent-tabs-mode nil)
+;;  ;; (auto-fill-mode)
+;;  (whitespace-mode)
+;;  (hungry-delete-mode)
+;;  ;; (flycheck-mode)
+;;  ;; (fci-mode)
+;;  )
+;; 
+;;(add-hook 'c-mode-common-hook   'coding-hook)
+;;(add-hook 'sh-mode-hook         'coding-hook)
+;;(add-hook 'js-mode-hook         'coding-hook)
+;;(add-hook 'java-mode-hook       'coding-hook)
+;;(add-hook 'lisp-mode-hook       'coding-hook)
+;;(add-hook 'emacs-lisp-mode-hook 'coding-hook)
+;;(add-hook 'makefile-mode-hook   'coding-hook)
+;;(add-hook 'latex-mode-hook      'coding-hook)
+;;(add-hook 'python-mode-hook     'coding-hook)
 
 (add-hook 'haskell-mode-hook 'haskell-indentation-mode)
 
@@ -496,6 +496,8 @@ time being Roboto, the default Android font).
 ;;; Python-specific customizations.
 (add-hook 'python-mode-hook     'flycheck-mode)
 (add-hook 'python-mode-hook     'python-docstring-mode)
+(add-hook 'python-mode-hook     'elpy-mode)
+
 
 ; Added #: to the fill regexp to reflow Python comments that have #: as the
 ; comment marker (e.g. traits docstrings)
@@ -542,10 +544,10 @@ time being Roboto, the default Android font).
 *** Manage virtual environments from within Emacs
 
 #+BEGIN_SRC emacs-lisp
-(require 'virtualenvwrapper)
-(venv-initialize-interactive-shells)
-(venv-initialize-eshell)
-(setq venv-location (expand-file-name "~/.edm/envs"))
+;;(require 'virtualenvwrapper)
+;;(venv-initialize-interactive-shells)
+;;(venv-initialize-eshell)
+;;(setq venv-location (expand-file-name "~/.edm/envs"))
 #+END_SRC
 
 *** Run nosetests from within Emacs
@@ -572,15 +574,15 @@ time being Roboto, the default Android font).
     Setting up Jedi requires a bit of installation, see the top of this file.
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:complete-on-dot t)                 ; optional
+;;(add-hook 'python-mode-hook 'jedi:setup)
+;;(setq jedi:complete-on-dot t)                 ; optional
 
 ; jedi:after-change-handler seems to cause buffer corruption, disable it.
 ; See https://github.com/tkf/emacs-jedi/issues/234
 ;     https://debbugs.gnu.org/cgi/bugreport.cgi?bug=20440
-(add-hook 'jedi-mode-hook
-          (lambda () (remove-hook 'after-change-functions
-                                  'jedi:after-change-handler t)))
+;;(add-hook 'jedi-mode-hook
+;;          (lambda () (remove-hook 'after-change-functions
+;;                                  'jedi:after-change-handler t)))
 
 #+END_SRC
 
