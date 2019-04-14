@@ -9,8 +9,6 @@ PATH="$PATH:$HOME/.cask/bin"
 PATH="$PATH:/usr/local/opt/go/libexec/bin"
 export PATH="$PATH"
 
-export GOPATH="$HOME/projects/go"
-
 # Unlimited history + timestamps
 export HISTFILESIZE=
 export HISTSIZE=
@@ -72,7 +70,19 @@ fi
 # Manage SSH keys via keychain script. This asks for user inpt and so should
 # not be run automatically (otherwise it'll interfere with e.g. X session
 # manager)
-rekeychain() { eval $(keychain --eval --quiet -Q --agents ssh --inherit any "$KEY_NAME") ; ssh-add -l; }
+function rekeychain() {
+    eval $(keychain --eval --quiet -Q --agents ssh --inherit any "$KEY_NAME")
+    ssh-add -l
+}
+
+# Third party environments. We want to keep those out of the PATH
+# until we need them.
+function activate_conda() {
+    local conda_sh="~/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "$conda_sh" ]; then
+	source "$conda_sh"
+    fi
+}
 
 # Convenient aliases
 alias ls="ls --color"
@@ -86,13 +96,5 @@ alias mg="edm shell -e metagenome"
 alias hatcher="hatcher --url https://packages.enthought.com"
 alias utt="~/.edm/envs/edm/bin/utt"
 
-. /home/jvankerschaver/miniconda3/etc/profile.d/conda.sh
-
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/jvankerschaver/local/google-cloud-sdk/path.bash.inc' ]; then . '/home/jvankerschaver/local/google-cloud-sdk/path.bash.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/jvankerschaver/local/google-cloud-sdk/completion.bash.inc' ]; then . '/home/jvankerschaver/local/google-cloud-sdk/completion.bash.inc'; fi
-
 export WORKON_HOME="$HOME/.edm/envs"
+
