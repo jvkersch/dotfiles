@@ -75,6 +75,8 @@ fi
 rekeychain() { eval $(keychain --eval --quiet -Q --agents ssh --inherit any "$KEY_NAME") ; ssh-add -l; }
 
 # Convenient aliases
+alias ls="ls --color"
+
 alias nb="jupyter notebook"
 alias mi="edm shell -e microbiome-dev"
 alias mg="edm shell -e metagenome"
