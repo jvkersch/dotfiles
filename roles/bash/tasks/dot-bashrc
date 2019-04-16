@@ -98,3 +98,17 @@ alias utt="~/.edm/envs/edm/bin/utt"
 
 export WORKON_HOME="$HOME/.edm/envs"
 
+# Bash helper functions
+function merge() {
+    if [ "$#" -ne 2 ]; then
+        echo "Usage: merge <folder1> <folder2>"
+        echo -n "Merges the content of <folder2> into <folder1>, "
+        echo "deleting <folder2> afterwards."
+        return
+    fi
+
+    local folder1="$1"
+    local folder2="$2"
+    mv "$folder2"/* "$folder1"
+    rmdir "$folder2"
+}
