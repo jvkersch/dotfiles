@@ -28,7 +28,7 @@
 (depends-on "markdown-mode")
 (depends-on "modern-cpp-font-lock")
 (depends-on "nose")
-(depends-on "org-bullets")
+;; (depends-on "org-bullets")
 (depends-on "pallet")
 (depends-on "php-mode")
 (depends-on "python-docstring")
