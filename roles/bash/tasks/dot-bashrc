@@ -24,6 +24,8 @@ alias gbb="git bisect bad"
 alias gbg="git bisect good"
 alias gbr="git bisect reset"
 
+alias reset_screen='SCREEN="eDP-1-1"; xrandr --output "$SCREEN" --off; xrandr --output "$SCREEN" --auto;'
+
 export EDITOR=emacsclient
 
 # Don't check docstrings (pyflakes)
