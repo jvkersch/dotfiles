@@ -1,0 +1,4 @@
+- name: install vs code settings
+  copy:
+    src: "settings.json"
+    dest: "~/.config/Code/User/settings.json"

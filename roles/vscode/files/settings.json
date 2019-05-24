@@ -1,10 +1,17 @@
 {
-	"python.venvPath": "~/.edm/envs",
-	"python.unitTest.unittestEnabled": true,
+    "C_Cpp.updateChannel": "Insiders",
+    "workbench.editor.closeOnFileDelete": true,
+    "editor.minimap.enabled": false,
+    "editor.fontFamily": "'Fira Code', 'Droid Sans Mono', 'monospace', monospace, 'Droid Sans Fallback'",
+    "editor.fontLigatures": true,
+    "editor.rulers": [79],
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "python.venvPath": "~/.edm/envs",
+    "python.testing.pyTestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.unittestEnabled": true,
 	"python.linting.flake8Enabled": true,
 	"python.linting.pylintEnabled": false,
-	"editor.minimap.enabled": false,
-	"files.trimTrailingWhitespace": true,
-	"files.insertFinalNewline": true,
 	"breadcrumbs.enabled": true
 }
