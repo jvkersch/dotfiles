@@ -118,7 +118,7 @@
 
     (when ha/fixed-font-family
       (set-frame-font ha/fixed-font-family)
-      (set-face-attribute 'default nil :font ha/fixed-font-family :height 140)
+      (set-face-attribute 'default nil :font ha/fixed-font-family :height 100)
       (set-face-font 'default ha/fixed-font-family)
       (set-face-font 'fixed-pitch ha/fixed-font-family))
   #+END_SRC
@@ -555,7 +555,7 @@ time being Roboto, the default Android font).
     Taken from [[[https://bitbucket.org/durin42/nosemacs]]].
 
 #+BEGIN_SRC emacs-lisp
-(require 'nose)
+;; (require 'nose)
 (add-hook 'python-mode-hook
           (lambda ()
             (local-set-key "\C-ca" 'nosetests-all)
@@ -672,15 +672,6 @@ gebruik ik Skim, en stel ik de editor in de preferences in als
     (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)))
 #+END_SRC
 
-** JSX mode (react)
-
-
-#+BEGIN_SRC emacs-lisp
-;(add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode))
-
-(require 'rjsx-mode)
-#+END_SRC
-
 * Org-mode
 
 This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
@@ -706,7 +697,7 @@ This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
 (org-babel-do-load-languages
  'org-babel-load-languages
  '(
-   (sh . t)
+   (shell . t)
    (python . t)
    (R . t)
    (ruby . t)
