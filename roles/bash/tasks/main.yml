@@ -1,3 +1,9 @@
+- name: install git autocomplete for bash
+  apt:
+    name: bash-completion
+    state: present
+  become: yes
+
 - name: install dotfiles
   copy:
     src: "{{ item.src }}"
@@ -6,3 +12,4 @@
   loop:
     - { src: dot-bash_profile, dest: ~/.bash_profile }
     - { src: dot-bashrc, dest: ~/.bashrc }
+

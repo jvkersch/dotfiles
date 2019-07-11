@@ -685,6 +685,8 @@ This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
 ;; (require 'org-bullets)
 ;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+(setq org-tags-column -90)
+
 (setq org-todo-keywords
       '((sequence "TODO" "IN-PROGRESS" "PENDING" "|" "DONE" "CANCELLED")))
 (setq org-todo-keyword-faces

@@ -59,6 +59,11 @@ if [[ $(uname) == "Linux" ]]; then
     KEY_NAME="id_ecdsa_linux_2017"
 
     alias rg="ripgrep.rg"
+
+    if [ -f /etc/profile.d/bash_completion ]; then
+        . /etc/profile.d/bash_completion
+    fi
+
 else
     # Assume Darwin
     KEY_NAME="id_rsa_2016"
