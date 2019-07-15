@@ -1,12 +1,9 @@
 #!/bin/bash
 
-# Local utilities, including eg. stuff installed by Homebrew
-PATH="$PATH:/usr/local/bin"
 # User-specific executables
 PATH="$PATH:$HOME/local/bin"
-# Miscellaneous (should properly speaking go in $HOME/local)
+# Emacs Cask
 PATH="$PATH:$HOME/.cask/bin"
-PATH="$PATH:/usr/local/opt/go/libexec/bin"
 export PATH="$PATH"
 
 # Unlimited history + timestamps
@@ -14,35 +11,49 @@ export HISTFILESIZE=
 export HISTSIZE=
 export HISTTIMEFORMAT="%h/%d %H:%M:%S "
 
-# Aliases
-alias ec=emacsclient
-alias ls="ls -G"
-alias peekd="dirs +1"
-
-alias gbs="git bisect start"
-alias gbb="git bisect bad"
-alias gbg="git bisect good"
-alias gbr="git bisect reset"
-
-alias reset_screen='SCREEN="eDP-1-1"; xrandr --output "$SCREEN" --off; xrandr --output "$SCREEN" --auto;'
-
+# Use Emacs for local editing; requires Emacs server to be running.
 export EDITOR=emacsclient
 
-# Don't check docstrings (pyflakes)
-export PYFLAKES_NODOCTEST=1
+# Aliases
+alias ec=emacsclient
+alias ls="ls -G --color"
+alias peekd="dirs +1"
+alias pbcopy='xclip -selection clipboard'
+alias pbpaste='xclip -selection clipboard -o'
+alias hatcher="hatcher --url https://packages.enthought.com"
+alias utt="~/.edm/envs/edm/bin/utt"
 
-# SSH autocomplete
-_ssh_comp() {
-    perl -ne 'print "$1 " if /^Host (.+)$/' ~/.ssh/config
+# Command shortcuts
+alias nb="jupyter notebook"
+alias mi="edm shell -e microbiome-dev"
+alias mg="edm shell -e metagenome"
+alias bd="edm shell -e bacterial-database"
+alias mg="edm shell -e metagenome"
+
+# Useful autocompletions. Requires the bash-completion package.
+. /usr/share/bash-completion/completions/git
+. /usr/share/bash-completion/completions/ssh
+
+# Manage SSH keys via keychain script. This asks for user inpt and so should
+# not be run automatically (otherwise it'll interfere with e.g. X session
+# manager)
+function rekeychain() {
+    local keyname="id_ecdsa_linux_2017"
+    eval $(keychain --eval --quiet -Q --agents ssh --inherit any "$keyname")
+    ssh-add -l
 }
-complete -W "$(_ssh_comp)" ssh
 
-# Git setup.
+###############################################################################
+# Git setup
+###############################################################################
+
+# Git prompt. Relies on script in dotfiles repo.
+
 #GIT_PROMPT_ONLY_IN_REPO=1
 source ~/src/jvkersch/dotfiles/3rdparty/bash-git-prompt/gitprompt.sh
 
-# Disable git prompt (useful for big repos) by adding "GIT_PROMPT_IGNORE=1" to
-# a .bash-git-rc file in the repository root
+# Allow for disabling git prompt (useful for big repos) by adding
+# "GIT_PROMPT_IGNORE=1" to a .bash-git-rc file in the repository root
 function disable_git_prompt() {
     local repo=$(git rev-parse --show-toplevel 2> /dev/null)
     if [[ -e "$repo" ]]; then
@@ -51,38 +62,24 @@ function disable_git_prompt() {
     fi
 }
 
-
-# Linux-specific stuff
-if [[ $(uname) == "Linux" ]]; then
-    alias pbcopy='xclip -selection clipboard'
-    alias pbpaste='xclip -selection clipboard -o'
-    KEY_NAME="id_ecdsa_linux_2017"
-
-    alias rg="ripgrep.rg"
-
-    if [ -f /etc/profile.d/bash_completion ]; then
-        . /etc/profile.d/bash_completion
-    fi
-
-    source /usr/share/bash-completion/completions/git
-
-else
-    # Assume Darwin
-    KEY_NAME="id_rsa_2016"
-
-    if [ -f $(brew --prefix)/etc/bash_completion ]; then
-        . $(brew --prefix)/etc/bash_completion
-    fi
-fi
+alias gbs="git bisect start"
+alias gbb="git bisect bad"
+alias gbg="git bisect good"
+alias gbr="git bisect reset"
 
 
-# Manage SSH keys via keychain script. This asks for user inpt and so should
-# not be run automatically (otherwise it'll interfere with e.g. X session
-# manager)
-function rekeychain() {
-    eval $(keychain --eval --quiet -Q --agents ssh --inherit any "$KEY_NAME")
-    ssh-add -l
-}
+###############################################################################
+# Python setup
+###############################################################################
+
+# Don't check docstrings (pyflakes)
+export PYFLAKES_NODOCTEST=1
+export WORKON_HOME="$HOME/.edm/envs"
+
+
+###############################################################################
+# Helper functions
+###############################################################################
 
 # Third party environments. We want to keep those out of the PATH
 # until we need them.
@@ -93,21 +90,6 @@ function activate_conda() {
     fi
 }
 
-# Convenient aliases
-alias ls="ls --color"
-
-alias nb="jupyter notebook"
-alias mi="edm shell -e microbiome-dev"
-alias mg="edm shell -e metagenome"
-alias bd="edm shell -e bacterial-database"
-alias mg="edm shell -e metagenome"
-
-alias hatcher="hatcher --url https://packages.enthought.com"
-alias utt="~/.edm/envs/edm/bin/utt"
-
-export WORKON_HOME="$HOME/.edm/envs"
-
-# Bash helper functions
 function merge() {
     if [ "$#" -ne 2 ]; then
         echo "Usage: merge <folder1> <folder2>"
@@ -120,4 +102,12 @@ function merge() {
     local folder2="$2"
     mv "$folder2"/* "$folder1"
     rmdir "$folder2"
+}
+
+# Turn laptop screen off and on; helps with removing artifacts in the
+# background due to buggy drivers (sometimes)
+function reset_screen() {
+    local screen="eDP-1-1"
+    xrandr --output "$screen" --off
+    xrandr --output "$screen" --auto;
 }
