@@ -30,7 +30,10 @@ alias mg="edm shell -e metagenome"
 alias bd="edm shell -e bacterial-database"
 alias mg="edm shell -e metagenome"
 
-# Useful autocompletions. Requires the bash-completion package.
+# Useful autocompletions. Requires the bash-completion package. NOTE: the SSH
+# autocompletion script needs extended globbing
+# (https://www.linuxjournal.com/content/bash-extended-globbing)
+shopt -s extglob
 . /usr/share/bash-completion/completions/git
 . /usr/share/bash-completion/completions/ssh
 
