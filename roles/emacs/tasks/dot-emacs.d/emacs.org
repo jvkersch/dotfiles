@@ -370,6 +370,15 @@ time being Roboto, the default Android font).
 ;;(setq tags-table-list '("~/.etags"))
 #+END_SRC
 
+** Terraform scripts
+
+Open Terraform scripts (.tf) in HCL mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package hcl-mode
+  :mode (("\\.tf" . hcl-mode)))
+#+END_SRC
+
 ** C++ mode
 
    Use cc mode from Sourceforge. TODO: replace this with a GitHub mirror so that
