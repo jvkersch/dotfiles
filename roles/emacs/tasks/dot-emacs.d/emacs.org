@@ -694,6 +694,18 @@ This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
 ;; (require 'org-bullets)
 ;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+(setq org-directory
+      (file-name-as-directory
+       (expand-file-name "~/Dropbox/Joris/writing")))
+(setq org-default-notes-file (concat org-directory "/inbox.org"))
+
+(setq jvk/gtd-file (concat org-directory "gtd.org"))
+
+(define-key global-map "\C-cc" 'org-capture)
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline jvk/gtd-file "Inbox")
+         "** TODO %?")))
+
 (setq org-tags-column -90)
 
 (setq org-todo-keywords
@@ -721,32 +733,6 @@ This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
 (require 'org-install)  ;; What does this do again?
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (setq org-log-done t)
-
-(setq org-base-folder (expand-file-name "~/src/personal-stuff/org-documents/"))
-(setq org-default-notes-file (concat org-base-folder "notes.org"))
-
-; (setq my-tasks-file
-;       (concat (file-name-as-directory org-base-folder) "tasks-2015.org"))
-(setq my-unsorted-tasks-file
-      (concat (file-name-as-directory org-base-folder) "unsorted-tasks.org"))
-(setq my-journal-file
-      (concat (file-name-as-directory org-base-folder) "journal.org"))
-
-(define-key global-map "\C-cc" 'org-capture)
-
-(setq org-capture-templates
-      '(("t" "Todo" entry (file+headline my-unsorted-tasks-file "Tasks")
-             "* TODO %?\n  %i\n  %a")
-        ("j" "Journal" entry (file+datetree my-journal-file)
-             "* %?\nEntered on %U\n  %i\n  %a")))
-
-; Visit org files that I use a lot.
-(global-set-key [f3]
-                (lambda () (interactive)
-                  (find-file my-tasks-file)))
-(global-set-key [f4]
-                (lambda () (interactive)
-                  (find-file my-unsorted-tasks-file)))
 
 ; org clock mode.
 (setq org-clock-persist 'history)
