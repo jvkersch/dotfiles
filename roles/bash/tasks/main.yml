@@ -1,5 +1,6 @@
+
 - name: install git autocomplete for bash
-  apt:
+  package:
     name: bash-completion
     state: present
   become: yes
