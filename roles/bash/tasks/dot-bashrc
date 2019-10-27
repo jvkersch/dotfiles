@@ -112,3 +112,13 @@ function reset_screen() {
     xrandr --output "$screen" --off
     xrandr --output "$screen" --auto;
 }
+
+
+function mount_ipad_kindle() {
+    mkdir -p ~/mount/ipad/kindle
+    ifuse --documents com.amazon.Lassen ~/mount/ipad/kindle
+}
+
+function umount_ipad_kindle() {
+    umount ~/mount/ipad/kindle
+}
