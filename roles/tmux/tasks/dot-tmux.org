@@ -1,0 +1,4 @@
+bind-key a set-window-option synchronize-panes\; display-message "synchronize-panes is now #{?pane_synchronized,on,off}"
+
+bind-key v select-layout even-vertical
+bind-key h select-layout even-horizontal

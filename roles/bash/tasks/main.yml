@@ -1,9 +1,9 @@
 
-- name: install git autocomplete for bash
-  package:
-    name: bash-completion
-    state: present
-  become: yes
+#- name: install git autocomplete for bash
+#  package:
+#    name: bash-completion
+#    state: present
+#  become: yes
 
 - name: install dotfiles
   copy:

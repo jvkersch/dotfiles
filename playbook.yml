@@ -17,6 +17,7 @@
       tags: ['linux', 'macos']  # XXX
           
   roles:
+    - { role: tmux, tags: ['linux', 'macos'] }
     - { role: bash, tags: ['linux', 'macos'] }
     - { role: emacs, tags: ['linux', 'macos'] }
     - { role: python, tags: ['linux', 'macos'] }
