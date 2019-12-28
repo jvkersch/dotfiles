@@ -4,4 +4,4 @@
           dest: "{{ item.dest }}"
   check_mode: no
   loop:
-          - { src: dot-tmux.org, dest: ~/.tmux.org }
+          - { src: dot-tmux.conf, dest: ~/.tmux.conf }
