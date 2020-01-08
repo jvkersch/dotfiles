@@ -1,0 +1,6 @@
+[user]
+	email = jvankerschaver@enthought.com
+	name = Joris Vankerschaver
+[alias]
+	clean-merged = "!f(){ git branch --merged | grep -v '*' | xargs git branch -d; }; f"
+	clean-all-but-master = "!f(){ git branch | grep -v master | xargs git branch -D; }; f"
