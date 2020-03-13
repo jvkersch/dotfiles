@@ -109,19 +109,20 @@
   The font configuration below is copied from [[https://github.com/howardabrams/dot-files/blob/master/emacs-client.org][Howard Abram's emacs configuration]]:
 
 #+BEGIN_SRC emacs-lisp
-(when (display-graphic-p)
-  (defvar ha/fixed-font-family
-    (cond ((x-list-fonts "Hasklig")         "Hasklig")
-          ((x-list-fonts "Source Code Pro") "Source Code Pro")
-          ((x-list-fonts "Anonymous Pro")   "Anonymous Pro")
-          ((x-list-fonts "M+ 1mn")          "M+ 1mn"))
-    "My fixed width font based on what is installed, `nil' if not defined.")
-  (when ha/fixed-font-family
-    (set-frame-font ha/fixed-font-family)
-    (set-face-attribute 'default nil :font ha/fixed-font-family :height 100)
-    (set-face-font 'default ha/fixed-font-family)
-    (set-face-font 'fixed-pitch ha/fixed-font-family)))
- #+END_SRC
+(defvar ha/fixed-font-family
+  (cond 
+   ((not (display-graphic-p)) nil)
+   ((x-list-fonts "Hasklig")         "Hasklig")
+   ((x-list-fonts "Source Code Pro") "Source Code Pro")
+   ((x-list-fonts "Anonymous Pro")   "Anonymous Pro")
+   ((x-list-fonts "M+ 1mn")          "M+ 1mn"))
+  "My fixed width font based on what is installed, `nil' if not defined.")
+(when ha/fixed-font-family
+  (set-frame-font ha/fixed-font-family)
+  (set-face-attribute 'default nil :font ha/fixed-font-family :height 100)
+  (set-face-font 'default ha/fixed-font-family)
+  (set-face-font 'fixed-pitch ha/fixed-font-family))
+#+END_SRC
 
   Customizations for eshell mode (from John D Cook)
   #+BEGIN_SRC emacs-lisp
