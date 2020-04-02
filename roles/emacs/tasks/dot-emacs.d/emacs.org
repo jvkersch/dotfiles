@@ -350,6 +350,32 @@
 ;(jvk/light-color-theme)
 #+END_SRC
 
+* org-download
+
+Allows for easy saving of file resources (mostly images) to org
+directories. The ~org-download-method~ customization is taken directly from the
+[[https://coldnew.github.io/hexo-org-example/2018/05/22/use-org-download-to-drag-image-to-emacs/][coldnew]] blog (I've only changed the name to make it fit my naming scheme
+better).
+
+#+BEGIN_SRC emacs-lisp
+(defun jvk/org-download-method (link)
+  "Provide file location to store resources."
+  (let ((filename
+         (file-name-nondirectory
+          (car (url-path-and-query
+                (url-generic-parse-url link)))))
+        (dirname (file-name-sans-extension (buffer-name)) ))
+    (unless (file-exists-p dirname)
+      (make-directory dirname))
+    (message "Saving file '%s' to directory '%s'..." filename dirname)
+    (expand-file-name filename dirname)))
+
+(use-package org-download
+  :init
+  (setq org-download-method 'jvk/org-download-method))
+#+END_SRC
+
+
 
 Set fonts for org mode and Markdown editing to something proportional (for the
 time being Roboto, the default Android font).

@@ -17,6 +17,7 @@
 (depends-on "jedi")
 (depends-on "magit")
 (depends-on "markdown-mode")
+(depends-on "org-download")
 (depends-on "pallet")
 (depends-on "rust-mode")
 (depends-on "undo-tree")
