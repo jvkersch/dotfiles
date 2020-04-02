@@ -532,7 +532,12 @@ Open Terraform scripts (.tf) in HCL mode
 ;;; Python-specific customizations.
 (add-hook 'python-mode-hook     'flycheck-mode)
 (add-hook 'python-mode-hook     'python-docstring-mode)
-(add-hook 'python-mode-hook     'elpy-mode)
+;(add-hook 'python-mode-hook     'elpy-mode)
+
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
 
 
 ; Added #: to the fill regexp to reflow Python comments that have #: as the
