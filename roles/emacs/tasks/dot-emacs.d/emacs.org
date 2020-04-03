@@ -375,7 +375,32 @@ better).
   (setq org-download-method 'jvk/org-download-method))
 #+END_SRC
 
+* org-mode quick capturing
 
+#+BEGIN_SRC emacs-lisp
+(setq org-directory
+      (file-name-as-directory
+       (expand-file-name "~/Dropbox/Joris/writing")))
+(setq org-default-notes-file (concat org-directory "/inbox.org"))
+
+(define-key global-map "\C-cc" 'org-capture)
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline jvk/gtd-file "Inbox")
+         "** TODO %?")))
+#+END_SRC
+
+* GTD customizations for org-mode
+
+#+BEGIN_SRC emacs-lisp
+(setq jvk/gtd-file (concat org-directory "gtd.org"))
+
+(defun gtd ()
+  "Open GTD buffer"
+  (interactive)
+  (find-file jvk/gtd-file))
+#+END_SRC
+
+* Fonts (out of date)
 
 Set fonts for org mode and Markdown editing to something proportional (for the
 time being Roboto, the default Android font).
@@ -725,18 +750,6 @@ This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
 
 ;; (require 'org-bullets)
 ;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
-(setq org-directory
-      (file-name-as-directory
-       (expand-file-name "~/Dropbox/Joris/writing")))
-(setq org-default-notes-file (concat org-directory "/inbox.org"))
-
-(setq jvk/gtd-file (concat org-directory "gtd.org"))
-
-(define-key global-map "\C-cc" 'org-capture)
-(setq org-capture-templates
-      '(("t" "Todo" entry (file+headline jvk/gtd-file "Inbox")
-         "** TODO %?")))
 
 (setq org-tags-column -90)
 
