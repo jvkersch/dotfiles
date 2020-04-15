@@ -110,7 +110,7 @@
 
 #+BEGIN_SRC emacs-lisp
 (defvar ha/fixed-font-family
-  (cond 
+  (cond
    ((not (display-graphic-p)) nil)
    ((x-list-fonts "Hasklig")         "Hasklig")
    ((x-list-fonts "Source Code Pro") "Source Code Pro")
@@ -398,6 +398,73 @@ better).
   "Open GTD buffer"
   (interactive)
   (find-file jvk/gtd-file))
+
+;; Adapted from Stefan van der Walt's answer
+;; https://stackoverflow.com/a/27043756
+(defun org-archive-done-tasks ()
+  (interactive)
+  (org-map-entries
+   (lambda ()
+     (org-archive-subtree)
+     (setq org-map-continue-from (org-element-property :begin (org-element-at-point))))
+   "/DONE" 'file))
+
+#+END_SRC
+
+* "zettelkasten" notetaking with org
+
+#+BEGIN_SRC emacs-lisp
+(defvar jvk/zettel-base-directory
+  (expand-file-name "~/src/jvkersch/notes"))
+
+;; Adapted from org-roam (https://github.com/jethrokuan/org-roam)
+(defun org-roam--extract-global-props (props)
+  "Extract PROPS from the current org buffer.
+The search terminates when the first property is encountered."
+  (let ((buf (org-element-parse-buffer))
+        res)
+    (dolist (prop props)
+      (let ((p (org-element-map buf 'keyword
+                 (lambda (kw)
+                   (when (string= (org-element-property :key kw) prop)
+                     (org-element-property :value kw)))
+                 :first-match t)))
+        (push (cons prop p) res)))
+    res))
+
+(defun jvk/extract-title ()
+  (interactive)
+  "Extract the TITLE property from the current org buffer."
+    (let ((props (org-roam--extract-global-props '("TITLE"))))
+      (cdr (assoc "TITLE" props))))
+
+(defun jvk/extract-title-from-org-file (org-fname)
+  (interactive)
+  "Extract the TITLE property from a given org buffer."
+  (with-temp-buffer
+    (insert-file-contents org-fname)
+    (jvk/extract-title)))
+
+(defun jvk/capture-org-title ()
+  (interactive)
+  "Copy the TITLE of the current org buffer to the kill ring."
+  (let ((title (jvk/extract-title)))
+    (if title
+        (kill-new title)
+      (error "No TITLE property found in current buffer."))))
+
+(defun isodate ()
+  (interactive)
+  (format-time-string "%Y-%m-%d"))
+
+(defun jvk/create-new-zettel ()
+  (interactive)
+  (let* ((zettel-base-name
+          (read-string "Enter zettel name: " (format "%s-" (isodate))))
+         (zettel-path
+          (concat (file-name-as-directory jvk/zettel-base-directory)
+                  zettel-base-name)))
+    (find-file zettel-path)))
 #+END_SRC
 
 * Fonts (out of date)
@@ -532,7 +599,7 @@ Open Terraform scripts (.tf) in HCL mode
 ;;  ;; (flycheck-mode)
 ;;  ;; (fci-mode)
 ;;  )
-;; 
+;;
 ;;(add-hook 'c-mode-common-hook   'coding-hook)
 ;;(add-hook 'sh-mode-hook         'coding-hook)
 ;;(add-hook 'js-mode-hook         'coding-hook)
