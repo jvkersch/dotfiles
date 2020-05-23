@@ -3,6 +3,7 @@
 (source melpa-stable)
 (source org)
 
+(depends-on "ace-isearch")
 (depends-on "ace-jump-mode")
 (depends-on "ace-window")
 (depends-on "auctex")
@@ -13,6 +14,7 @@
 (depends-on "flycheck")
 (depends-on "go-mode")
 (depends-on "haskell-mode")
+(depends-on "hasklig-mode")
 (depends-on "helm")
 (depends-on "hungry-delete")
 (depends-on "jedi")
@@ -20,6 +22,7 @@
 (depends-on "markdown-mode")
 (depends-on "org-download")
 (depends-on "pallet")
+(depends-on "python-docstring")
 (depends-on "rust-mode")
 (depends-on "undo-tree")
 (depends-on "use-package")

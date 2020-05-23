@@ -3,232 +3,189 @@
 #+EMAIL: joris.vankerschaver@gmail.com
 #+STARTUP: showall
 
-* Installation instructions
-** Run `cask install` from within .emacs.d folder.
-** From within Emacs, run "M-x jedi:install-server"
+- Run `cask install` from within .emacs.d folder.
+- From within Emacs, run "M-x jedi:install-server"
    (uses system Python by default; needs virtualenv)
-** (Optionally) install a newer CC mode from sourceforge
-** On Mac OS, make a symlink from the Cask directory to ~/.emacs
 
-* Package management.
-  #+BEGIN_SRC emacs-lisp
-  (require 'cask (expand-file-name "~/.cask/cask.el"))
-  (cask-initialize)
-  (require 'pallet)
-  (pallet-mode t)
-  #+END_SRC
 
-  For things that are not in Melpa, I use git submodules under ~/.emacs.d/modules.
+* Generic Emacs
 
-  #+BEGIN_SRC emacs-lisp
-  (setq plugin-path (expand-file-name "modules"))
 
-  ;;(add-to-list 'load-path (expand-file-name "ini.el" plugin-path))
-  ;;(require 'ini)
-  #+END_SRC
+** Package management
 
-* Setting up Emacs core
+ #+BEGIN_SRC emacs-lisp
+ (require 'cask (expand-file-name "~/.cask/cask.el"))
+ (cask-initialize)
+ (require 'pallet)
+ (pallet-mode t)
+ #+END_SRC
 
-  #+BEGIN_SRC emacs-lisp
-  (server-start)
-  #+END_SRC
 
-  #+BEGIN_SRC emacs-lisp
-  (setq user-full-name "Joris Vankerschaver"
-        user-email-address "Joris.Vankerschaver@gmail.com")
-  #+END_SRC
+** Emacs core
 
-  Basically, turn off all the fluff: no splash screen, short y/n answer format
-  instead of the default yes/no, no tool bar, etc.
+
+*** Emacs server
+
+Start the Emacs server upon startup.
 
 #+BEGIN_SRC emacs-lisp
-  (setq frame-title-format "Emacs: %f")
-  (tool-bar-mode -1)  ; I never use it anyway
-  (scroll-bar-mode -1)
-  (setq inhibit-splash-screen t)
-  (fset 'yes-or-no-p 'y-or-n-p)
+(server-start)
 #+END_SRC
 
-  Disable C-x C-c to quit emacs, since it is too easy to hit those keys by
-  mistake. To quit emacs, use an explicit M-x kill-emacs.
+*** User details
+
+#+BEGIN_SRC emacs-lisp
+(setq user-full-name "Joris Vankerschaver"
+      user-email-address "Joris.Vankerschaver@gmail.com")
+#+END_SRC
+
+*** Emacs customizations
+
+Turn off all the fluff: no splash screen, short y/n answer format instead of
+the default yes/no, no tool bar, etc.
+
+#+BEGIN_SRC emacs-lisp
+(setq frame-title-format "Emacs: %f")
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(setq inhibit-splash-screen t)
+(fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+Disable C-x C-c to quit emacs, since it is too easy to hit those keys by
+mistake. To quit Emacs, use an explicit M-x ~kill-emacs~.
 
 #+BEGIN_SRC emacs-lisp
 (defun disable-exit-keys ()
-  "Display an error message instead of terminating emacs"
-  (interactive)
   (message "To exit emacs, use M-x kill-emacs"))
 (global-set-key (kbd "C-x C-c") 'disable-exit-keys)
 #+END_SRC
 
-  Show Emacs with a slightly larger screen. I should probably retire this and
-  have the window manager take care of this instead.
+Show Emacs with a slightly larger screen. I should probably retire this and
+have the window manager take care of this instead.
 
 #+BEGIN_SRC emacs-lisp
-  (when (display-graphic-p)
-    (if (> (x-display-pixel-width) 1280)
-        (add-to-list 'default-frame-alist (cons 'width 100))
-      (add-to-list 'default-frame-alist (cons 'width 80))))
+(when (display-graphic-p)
+  (if (> (x-display-pixel-width) 1280)
+      (add-to-list 'default-frame-alist (cons 'width 100))
+    (add-to-list 'default-frame-alist (cons 'width 80))))
 #+END_SRC
 
-  By default Emacs creates backups in the current directory. Create them in a
-  hidden directory instead, so they're out of the way.
+By default Emacs creates backups in the current directory. Create them in a
+hidden directory instead, so they're out of the way.
 
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+END_SRC
 
-  Everything that Homebrew installs, most notably different Python
-  installations, ends up in /usr/local/bin. Add that.
+Add ~/usr/local/bin~ for and ~\~/local/bin~ for locally installed utilities.
 
 #+BEGIN_SRC emacs-lisp
-  (setq exec-path
-        (append exec-path '("/usr/local/bin/"
-                            "/Library/TeX/texbin")))
-(setenv "PATH" "/usr/local/bin:/Library/TeX/texbin/:$PATH" t)
-
-;;; also add our local utilities
- (setq exec-path
-        (append exec-path '("~/local/bin/")))
-
-
+(setq exec-path
+      (append exec-path
+              '("/usr/local/bin/")
+              '((expand-file-name "~/local/bin/"))))
 #+END_SRC
 
-* Fonts
+*** Visual mode
 
-  #+BEGIN_SRC sh :tangle no
-    # Install Hasklig
-    curl -OL https://github.com/i-tu/Hasklig/releases/download/0.9/Hasklig-0.9.tar.gz
-    tar xzvf Hasklig-0.9.tar.gz && cp Hasklig-0.9/*.otf ~/Library/Fonts/
-
-    # Install Source Code Pro
-    curl -OL https://github.com/adobe-fonts/source-code-pro/archive/2.010R-ro/1.030R-it.tar.gz
-    tar xzvf 1.030R-it.tar.gz && \
-      cp source-code-pro-2.010R-ro-1.030R-it/OTF/*.otf ~/Library/Fonts
-   #+END_SRC
-
-  The font configuration below is copied from [[https://github.com/howardabrams/dot-files/blob/master/emacs-client.org][Howard Abram's emacs configuration]]:
+Visual line mode turns on line wrapping and causes simple editing commands
+to act on visual lines, rather than logical lines.
 
 #+BEGIN_SRC emacs-lisp
-(defvar ha/fixed-font-family
-  (cond
-   ((not (display-graphic-p)) nil)
-   ((x-list-fonts "Hasklig")         "Hasklig")
-   ((x-list-fonts "Source Code Pro") "Source Code Pro")
-   ((x-list-fonts "Anonymous Pro")   "Anonymous Pro")
-   ((x-list-fonts "M+ 1mn")          "M+ 1mn"))
-  "My fixed width font based on what is installed, `nil' if not defined.")
-(when ha/fixed-font-family
-  (set-frame-font ha/fixed-font-family)
-  (set-face-attribute 'default nil :font ha/fixed-font-family :height 100)
-  (set-face-font 'default ha/fixed-font-family)
-  (set-face-font 'fixed-pitch ha/fixed-font-family))
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+(setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
 #+END_SRC
 
-  Customizations for eshell mode (from John D Cook)
-  #+BEGIN_SRC emacs-lisp
-(add-hook 'shell-mode-hook
-  (lambda ()
-    (define-key shell-mode-map (kbd "<M-up>") 'comint-previous-input)
-    (define-key shell-mode-map (kbd "<M-down>") 'comint-next-input)
-  )
-)
-#+END_SRC
+*** Line numbers
 
-
-* Tweaks for editing in Emacs
-
-** Standard stuff
-
-   Visual line mode turns on line wrapping and causes simple editing commands
-   to act on visual lines, rather than logical lines. It's pretty much a
-   given...
+Show line numbers in the status line, show column numbers as well, and set the
+fill column (the column beyond which line wrapping should happen) to
+something sensible for coding.
 
 #+BEGIN_SRC emacs-lisp
-     (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
-     (setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
+(setq line-number-mode t)
+(setq column-number-mode t)
+(setq-default fill-column 79)
 #+END_SRC
 
-   More uncontroversial stuff: show line numbers in the status line, show
-   column numbers as well, and set the fill column (the column beyond which
-   line wrapping should happen) to something sensible for coding.
+Automatically add a newline on the last line when there is none.
 
 #+BEGIN_SRC emacs-lisp
-     (setq line-number-mode t)
-     (setq column-number-mode t)
-     (setq-default fill-column 79)
+(setq require-final-newline t)
 #+END_SRC
 
-   Add a newline on the last line when there is none. This is visually
-   pleasing, and tools like pycodestyle for Python complain about this.
+*** CUA mode
+
+Enable [[https://www.emacswiki.org/emacs/CuaMode][CUA mode]] (Common User Access), allows for more flexible selections,
+rectangle selection using C-RET, easy access to registers, and more. It comes
+bundled with Emacs.
+
+Some useful [[http://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html#CUA-Bindings][CUA keybindings]]:
+
+|-----------+--------------------------------------------|
+| C-RET     | Start in CUA rectangle mode                |
+| C-S-SPC   | Copy text to global mark                   |
+| C-1 C-w   | Kill, yank, copy, etc to numbered register |
+|-----------+--------------------------------------------|
+
+To view the content of a register, use M-x ~view-register~
 
 #+BEGIN_SRC emacs-lisp
-     (setq require-final-newline t)
+(cua-selection-mode t)
 #+END_SRC
 
-** CUA mode
+*** ido-mode
 
-   [[https://www.emacswiki.org/emacs/CuaMode][CUA mode]] (Common User Access)
-   allows for more flexible selections, rectangle selection using C-RET, easy
-   access to registers, and more. It comes bundled with Emacs.
-
-   I like having it around, but I don't want it to override the standard Emacs
-   keybindings.
+[[https://www.emacswiki.org/emacs/InteractivelyDoThings][Interactively Do Things]]: typing the first few characters of a buffer to switch
+to or a file to open will narrow down successive choices.
 
 #+BEGIN_SRC emacs-lisp
-     (cua-selection-mode t)
+(ido-mode t)
 #+END_SRC
 
-   Some useful [[http://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html#CUA-Bindings][CUA keybindings]]:
 
-   |-----------+--------------------------------------------|
-   | C-RET     | Start in CUA rectangle mode                |
-   | C-S-SPC   | Copy text to global mark                   |
-   | +C-1 C-w+ | Kill, yank, copy, etc to numbered register |
-   |-----------+--------------------------------------------|
+** Common packages
 
-   (The numbered prefix keys interfere with Amethyst)
 
-* Useful packages for all modes
+*** use-package
 
-** use-package
+[[https://github.com/jwiegley/use-package][use-package]] is a package to tidy up your .emacs configuration. It allows you to
+run code before or after a package is loaded, set up key bindings for modes, in
+a neat and concise declarative manner.
 
-   [[https://github.com/jwiegley/use-package][use-package]] is, in its own words, a package to tidy up your .emacs
-   configuration. It allows you to run code before or after a package is loaded,
-   set up key bindings for modes, in a neat and concise declarative manner.
+ #+BEGIN_SRC emacs-lisp
+(require 'use-package)
+ #+END_SRC
+
+*** yasnippet
+
+[[https://github.com/capitaomorte/yasnippet/blob/master/README.mdown][yasnippet]] is a templating system for Emacs.
 
 #+BEGIN_SRC emacs-lisp
-     (require 'use-package)
+(use-package yasnippet
+  :config (yas-global-mode 1)
+  :bind (("M-<tab>" . yas-expand)))
 #+END_SRC
 
-** yasnippet
+*** undo-tree
 
-   [[https://github.com/capitaomorte/yasnippet/blob/master/README.mdown][yasnippet]] is a templating system for Emacs.
+Represent successive undos and redos as a tree, which can be navigated with the
+up and down arrow keys.
 
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet
-    :config (yas-global-mode 1)
-    :bind (("M-<tab>" . yas-expand)))
-#+END_SRC
-
-** undo-tree
-
-   Represent successive undos and redos as a tree, which can be navigated with
-   the up and down arrow keys.
-
-#+BEGIN_SRC emacs-lisp
+ #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
   :init
   (progn
     (global-undo-tree-mode)
     (setq undo-tree-visualizer-timestamps t)
     (setq undo-tree-visualizer-diff t)))
+ #+END_SRC
 
-#+END_SRC
+*** bm (visual bookmarks)
 
-** visual bookmarks
-
-   Leave visual bookmarks in your code via [[https://github.com/joodland/bm][bm]]. The keybindings listed here are
-   those of ... Visual Studio.
+Leave visual bookmarks in your code via [[https://github.com/joodland/bm][bm]]. The keybindings listed here are
+those of ... Visual Studio.
 
 #+BEGIN_SRC emacs-lisp
 (use-package bm
@@ -243,45 +200,37 @@
     (global-set-key (kbd "<left-fringe> <mouse-1>") 'bm-toggle-mouse)
     (setq bm-in-lifo-order t)
     (setq temporary-bookmark-p t)))
-
 #+END_SRC
 
-** ace-isearch mode
+*** ace-isearch
+
+Refer to windows by number.
+
+| M-o <num>         | Jump to window <num>            |
+| C-u M-o <num>     | Switch current window and <num> |
+| C-u C-u M-o <num> | Delete window <num>             |
 
 #+BEGIN_SRC emacs-lisp
-;(global-ace-isearch-mode t)
-; ace-window mode, with the default keymap.
-; Keybindings:
-;   M-p <num>            Jump to window <num>
-;   C-u M-p <num>        Switch current window and <num>
-;   C-u C-u M-p <num>    Delete window <num>
-(global-set-key (kbd "M-o") 'ace-window)
-
-(setq enable-recursive-minibuffers t)
-(minibuffer-depth-indicate-mode 1)
+(use-package ace-isearch
+  :init
+  (setq enable-recursive-minibuffers t)
+  (minibuffer-depth-indicate-mode 1)
+  :bind (("M-o" . ace-window)))
 #+END_SRC
 
-** Hungry delete
+*** Hungry delete
 
-   Does what it says -- delete *all* whitespace with one stroke of backspace.
+Delete all whitespace with one stroke of backspace.
 
 #+BEGIN_SRC emacs-lisp
-(require 'hungry-delete)
+(use-package hungry-delete)
 #+END_SRC
 
-** ido-mode
-
-   [[https://www.emacswiki.org/emacs/InteractivelyDoThings][Interactively Do Things]]: typing the first few characters of a buffer to
-   switch to or a file to open will narrow down successive choices.
-
-#+BEGIN_SRC emacs-lisp
-(ido-mode t)
-#+END_SRC
 
 * Color themes
 
-  Make code blocks in Org-mode stand out from the rest of the text. I stole
-  this from [[https://github.com/howardabrams/dot-files/blob/master/emacs-mac.org][Howard Abrams]].
+Make code blocks in Org-mode stand out from the rest of the text. I stole this
+from [[https://github.com/howardabrams/dot-files/blob/master/emacs-mac.org][Howard Abrams]].
 
 #+BEGIN_SRC emacs-lisp
 (defun jvk/org-src-color-blocks-light ()
@@ -297,7 +246,6 @@
 (defun ha/org-src-color-blocks-light ()
   "Colors the block headers and footers to make them stand out more for lighter themes"
   (interactive)
-
   (custom-set-faces
    '(org-block-begin-line
     ((t (:underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF"))))
@@ -323,8 +271,7 @@
      ((t (:foreground "#008ED1" :background "#002E41"))))
 
    '(mode-line-buffer-id ((t (:foreground "black" :bold t))))
-   '(which-func ((t (:foreground "green")))))
-)
+   '(which-func ((t (:foreground "green"))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -350,7 +297,74 @@
 ;(jvk/light-color-theme)
 #+END_SRC
 
-* org-download
+
+* Org-mode
+
+
+** Basic Org customization
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook
+          (lambda ()
+            (setq-default indent-tabs-mode nil)))
+
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-cb" 'org-switchb)
+
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+
+(setq org-tags-column -90)
+(setq org-src-fontify-natively t)
+#+END_SRC
+
+
+** org-todo
+
+#+BEGIN_SRC emacs-lisp
+(setq org-log-done t)
+
+; org clock mode.
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
+
+(setq org-todo-keywords
+      '((sequence "TODO" "IN-PROGRESS" "PENDING" "|" "DONE" "CANCELLED")))
+(setq org-todo-keyword-faces
+          '(("TODO" . (:foreground "red"))
+            ("IN-PROGRESS" . (:foreground "orange"))
+            ("PENDING" . (:foreground "yellow"))
+            ("DONE" . (:foreground "green"))
+            ("CANCELLED" . (:foreground "lightblue"))))
+#+END_SRC
+
+
+** org-babel
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((shell . t)
+   (python . t)
+   (R . t)
+   (ruby . t)
+   (sqlite . t)
+   (perl . t)))
+#+END_SRC
+
+
+** org-bullets
+
+Show org-mode bullets as UTF-8 characters. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-bullets
+  :hook org-mode-hook)
+#+END_SRC
+
+
+** org-download
 
 Allows for easy saving of file resources (mostly images) to org
 directories. The ~org-download-method~ customization is taken directly from the
@@ -375,7 +389,8 @@ better).
   (setq org-download-method 'jvk/org-download-method))
 #+END_SRC
 
-* org-mode quick capturing
+
+** org-capture
 
 #+BEGIN_SRC emacs-lisp
 (setq org-directory
@@ -383,35 +398,23 @@ better).
        (expand-file-name "~/Dropbox/Joris/writing")))
 (setq org-default-notes-file (concat org-directory "/inbox.org"))
 
-(define-key global-map "\C-cc" 'org-capture)
 (setq org-capture-templates
       '(("t" "Todo" entry (file+headline jvk/gtd-file "Inbox")
          "** TODO %?")))
 #+END_SRC
 
-* GTD customizations for org-mode
+
+** Miscellaneous customizations for org-mode
 
 #+BEGIN_SRC emacs-lisp
-(setq jvk/gtd-file (concat org-directory "gtd.org"))
-
 (defun gtd ()
   "Open GTD buffer"
   (interactive)
-  (find-file jvk/gtd-file))
-
-;; Adapted from Stefan van der Walt's answer
-;; https://stackoverflow.com/a/27043756
-(defun org-archive-done-tasks ()
-  (interactive)
-  (org-map-entries
-   (lambda ()
-     (org-archive-subtree)
-     (setq org-map-continue-from (org-element-property :begin (org-element-at-point))))
-   "/DONE" 'file))
-
+  (find-file (concat org-directory "gtd.org")))
 #+END_SRC
 
-* "zettelkasten" notetaking with org
+
+** Structured notetaking with org-mode (in progress)
 
 #+BEGIN_SRC emacs-lisp
 (defvar jvk/zettel-base-directory
@@ -467,27 +470,9 @@ The search terminates when the first property is encountered."
     (find-file zettel-path)))
 #+END_SRC
 
-* Fonts (out of date)
-
-Set fonts for org mode and Markdown editing to something proportional (for the
-time being Roboto, the default Android font).
-
-#+BEGIN_SRC emacs-lisp
-;;(add-hook 'markdown-mode-hook 'variable-pitch-mode)
-;;(add-hook 'org-mode-hook 'variable-pitch-mode)
-;;(set-face-font 'variable-pitch "Roboto")
-;;(set-face-attribute 'variable-pitch nil :height 160 :weight 'light)
-;;(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-;;(set-face-attribute 'org-block nil :inherit 'fixed-pitch)
-;(set-face-attribute 'org-block-background nil :inherit 'fixed-pitch)
-#+END_SRC
-
 
 * Coding modes
 
-#+BEGIN_SRC emacs-lisp
-;;(setq tags-table-list '("~/.etags"))
-#+END_SRC
 
 ** Terraform scripts
 
@@ -498,30 +483,41 @@ Open Terraform scripts (.tf) in HCL mode
   :mode (("\\.tf" . hcl-mode)))
 #+END_SRC
 
-** C++ mode
 
-   Use cc mode from Sourceforge. TODO: replace this with a GitHub mirror so that
-   I can pull it in via git submodule
+** C/C++ mode
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/cc-mode-5.33")
-(require 'cc-mode)
-(add-hook 'c++-mode-hook 'modern-c++-font-lock-mode)
-#+END_SRC
+(defun c-hook ()
+  "Styling for C and C++ modes."
+  (c-toggle-auto-hungry-state t)
+  (c-set-style "stroustrup")
+  (setq c-basic-offset 4)
+  (c-set-offset 'substatement-open 0)
+  (c-set-offset 'inline-open 0))
 
-#+BEGIN_SRC emacs-lisp
+(add-hook 'c-mode-hook   'c-hook)
+(add-hook 'c++-mode-hook 'c-hook)
 
 (c-set-offset 'innamespace 0)
+#+END_SRC
+
+Display .mod files (ngspice circuit files) in C mode.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list
+  'auto-mode-alist
+  '("\\.mod$" . c-mode))
 #+END_SRC
 
 
 ** Shell scripts
 
-   Needs shellcheck to be installed.
+Needs shellcheck to be installed.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'sh-mode-hook 'flycheck-mode)
 #+END_SRC
+
 
 ** Magit
 
@@ -530,16 +526,17 @@ Open Terraform scripts (.tf) in HCL mode
 (global-set-key (kbd "M-g M-c") 'magit-checkout)
 #+END_SRC
 
-   Show commit SHA in blame mode.
+Show commit SHA in blame mode.
 
 #+BEGIN_SRC emacs-lisp
 (setq magit-blame-heading-format "%-20a %C %s %H")
 #+END_SRC
 
+
 ** Cython mode
 
-   Open Sage Cython files (.spyx) as well as regular Cython/Pyrex files (.pyx)
-   in cython mode.
+Open Sage Cython files (.spyx) as well as regular Cython/Pyrex files (.pyx) in
+cython mode.
 
 #+BEGIN_SRC emacs-lisp
 (use-package cython-mode
@@ -547,29 +544,20 @@ Open Terraform scripts (.tf) in HCL mode
          ("\\.pyx" . cython-mode)))
 #+END_SRC
 
+
 ** Octave mode
 
-   Associate the .m extension with Matlab instead of Objective C.
+Associate the .m extension with Matlab instead of Objective C.
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list
-  'auto-mode-alist
-  '("\\.m$" . octave-mode))
+(use-package octave-mode
+  :mode (("\\.m$" . octave-mode)))
 #+END_SRC
 
-** C mode
-
-   Display .mod files (ngspice circuit files) in C mode.
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list
-  'auto-mode-alist
-  '("\\.mod$" . c-mode))
-#+END_SRC
 
 ** Unix files
 
-   Not coding per se, but use [[https://wiki.archlinux.org/index.php/emacs#Syntax_Highlighting_for_Systemd_Files][syntax highlighting for Unix system files]].
+Not coding per se, but use [[https://wiki.archlinux.org/index.php/emacs#Syntax_Highlighting_for_Systemd_Files][syntax highlighting for Unix system files]].
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.service\\'" . conf-unix-mode))
@@ -582,49 +570,14 @@ Open Terraform scripts (.tf) in HCL mode
 (add-to-list 'auto-mode-alist '("\\.path\\'" . conf-unix-mode))
 #+END_SRC
 
-** Coding hook
-
-   Adapted from Jaap Eldering. Things that are convenient across all coding
-   buffers.
-
-#+BEGIN_SRC emacs-lisp
-;;(setq whitespace-style '(face empty tabs tab-mark lines-tail))
-;;(defun coding-hook ()
-;;  "Enable things that are convenient across all coding buffers."
-;;  (column-number-mode t)
-;;  (setq indent-tabs-mode nil)
-;;  ;; (auto-fill-mode)
-;;  (whitespace-mode)
-;;  (hungry-delete-mode)
-;;  ;; (flycheck-mode)
-;;  ;; (fci-mode)
-;;  )
-;;
-;;(add-hook 'c-mode-common-hook   'coding-hook)
-;;(add-hook 'sh-mode-hook         'coding-hook)
-;;(add-hook 'js-mode-hook         'coding-hook)
-;;(add-hook 'java-mode-hook       'coding-hook)
-;;(add-hook 'lisp-mode-hook       'coding-hook)
-;;(add-hook 'emacs-lisp-mode-hook 'coding-hook)
-;;(add-hook 'makefile-mode-hook   'coding-hook)
-;;(add-hook 'latex-mode-hook      'coding-hook)
-;;(add-hook 'python-mode-hook     'coding-hook)
-
-(add-hook 'haskell-mode-hook 'haskell-indentation-mode)
-
-#+END_SRC
 
 ** Python
-
-   Despite/because of Python being my language of choice, my Python
-   configuration is a huge jumble of things I copied from Stackoverflow, things
-   that I needed on the fly, and various other hacks (sometimes antiquated).
 
 #+BEGIN_SRC emacs-lisp
 ;;; Python-specific customizations.
 (add-hook 'python-mode-hook     'flycheck-mode)
 (add-hook 'python-mode-hook     'python-docstring-mode)
-;(add-hook 'python-mode-hook     'elpy-mode)
+
 
 (use-package elpy
   :ensure t
@@ -647,45 +600,9 @@ Open Terraform scripts (.tf) in HCL mode
   (add-to-list 'exec-path edm-path))
 
 (add-hook 'python-mode-hook 'add-good-python-path)
-
-; Use R's keybindings to send Python code to the interpreter
-; http://stackoverflow.com/questions/27777133
-(eval-after-load "python"
-  '(progn
-     (define-key python-mode-map (kbd "C-c C-r") 'python-shell-send-region)))
 #+END_SRC
 
-*** Reformat Python imports according to "dense" coding standard
-
-#+BEGIN_SRC emacs-lisp
-(defun py-statement-point-begin ()
-  (python-nav-beginning-of-statement)
-  (point))
-
-(defun py-statement-point-end ()
-  (python-nav-end-of-statement)
-  (point))
-
-(defun jvk/python-reformat-import ()
-  (interactive)
-  (save-excursion
-    (let ((pmin (py-statement-point-begin))
-          (pmax (py-statement-point-end)))
-      (shell-command-on-region pmin pmax "/Users/jvkersch/local/bin/cleanup-import-statement.py" nil t))))
-#+END_SRC
-
-*** Manage virtual environments from within Emacs
-
-#+BEGIN_SRC emacs-lisp
-;;(require 'virtualenvwrapper)
-;;(venv-initialize-interactive-shells)
-;;(venv-initialize-eshell)
-;;(setq venv-location (expand-file-name "~/.edm/envs"))
-#+END_SRC
-
-*** Run nosetests from within Emacs
-
-    Taken from [[[https://bitbucket.org/durin42/nosemacs]]].
+Taken from [[[https://bitbucket.org/durin42/nosemacs]]].
 
 #+BEGIN_SRC emacs-lisp
 ;; (require 'nose)
@@ -699,45 +616,6 @@ Open Terraform scripts (.tf) in HCL mode
             (local-set-key "\C-cpo" 'nosetests-pdb-one)))
 #+END_SRC
 
-*** Autocomplete for Python via Emacs Jedi
-
-    Useful default keybindings: C-tab for autocomplete at the point, M-n/M-p to
-    scroll through the autocomplete menu.
-
-    Setting up Jedi requires a bit of installation, see the top of this file.
-
-#+BEGIN_SRC emacs-lisp
-;;(add-hook 'python-mode-hook 'jedi:setup)
-;;(setq jedi:complete-on-dot t)                 ; optional
-
-; jedi:after-change-handler seems to cause buffer corruption, disable it.
-; See https://github.com/tkf/emacs-jedi/issues/234
-;     https://debbugs.gnu.org/cgi/bugreport.cgi?bug=20440
-;;(add-hook 'jedi-mode-hook
-;;          (lambda () (remove-hook 'after-change-functions
-;;                                  'jedi:after-change-handler t)))
-
-#+END_SRC
-
-*** Use IPython as the default Python shell in Emacs
-
-    Adapted from [[https://github.com/jhamrick/emacs/blob/master/.emacs.d/settings/python-settings.el][Jess Hamrick's Emacs configuration]].
-
-    2017/08/18 -- Added workaround for IPython 5 suggested by https://stackoverflow.com/a/25687205/394770
-
-#+BEGIN_SRC emacs-lisp
-(setq
- python-shell-interpreter "ipython"
- python-shell-interpreter-args "--matplotlib=osx --colors=Linux --simple-prompt"
- python-shell-prompt-regexp "In \\[[0-9]+\\]: "
- python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
- python-shell-completion-setup-code
-   "from IPython.core.completerlib import module_completion"
- python-shell-completion-module-string-code
-   "';'.join(module_completion('''%s'''))\n"
- python-shell-completion-string-code
-   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
-#+END_SRC
 
 ** Haskell
 
@@ -746,6 +624,7 @@ Open Terraform scripts (.tf) in HCL mode
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 #+END_SRC
+
 
 ** Golang
 
@@ -759,125 +638,10 @@ Open Terraform scripts (.tf) in HCL mode
             (setq indent-tabs-mode 1)))
 #+END_SRC
 
-** C and C++
 
-#+BEGIN_SRC emacs-lisp
-;; C/C++ customizations.
-(defun c-hook ()
-  "Styling for C and C++ modes."
-  (c-toggle-auto-hungry-state t)
-  (c-set-style "stroustrup")
-  (setq c-basic-offset 4)
-  (c-set-offset 'substatement-open 0)
-  (c-set-offset 'inline-open 0))
+* Useful elisp snippets.
 
-(add-hook 'c-mode-hook   'c-hook)
-(add-hook 'c++-mode-hook 'c-hook)
-
-#+END_SRC
-
-** Latex
-
-Aangepast van [[http://www.jesshamrick.com/2013/03/31/macs-and-emacs/]]. Forward
-search from PDF to LaTeX document is gebaseerd op
-[[http://www.cs.berkeley.edu/~prmohan/emacs/latex.html]]. Voor backward search
-gebruik ik Skim, en stel ik de editor in de preferences in als
-'/usr/local/bin/emacsclient' met als opties '--no-wait +%line "%file"'
-
-#+BEGIN_SRC emacs-lisp
-(require 'tex-site)
-(use-package tex-site
-  :init
-  (progn
-    (setq LaTeX-command "latex -synctex=1")
-    (setq TeX-PDF-mode t)
-    (setq TeX-view-program-list
-          (quote
-           (("Skim"
-             (concat "/Applications/Skim.app/"
-                     "Contents/SharedSupport/displayline"
-                     " %n %o %b")))))
-    (setq TeX-view-program-selection
-          (quote (
-                  (output-pdf "Skim")
-                  )))
-    (setq TeX-source-correlate-method 'synctex)
-    (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)))
-#+END_SRC
-
-* Org-mode
-
-This is a hodge-podge of options that I mostly copy-pasted from elsewehere.
-
-#+BEGIN_SRC emacs-lisp
-
-(add-hook 'org-mode-hook
-          (lambda ()
-            (setq-default indent-tabs-mode nil)))
-
-;; (require 'org-bullets)
-;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
-(setq org-tags-column -90)
-
-(setq org-todo-keywords
-      '((sequence "TODO" "IN-PROGRESS" "PENDING" "|" "DONE" "CANCELLED")))
-(setq org-todo-keyword-faces
-          '(("TODO" . (:foreground "red"))
-            ("IN-PROGRESS" . (:foreground "orange"))
-            ("PENDING" . (:foreground "yellow"))
-            ("DONE" . (:foreground "green"))
-            ("CANCELLED" . (:foreground "lightblue"))))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '(
-   (shell . t)
-   (python . t)
-   (R . t)
-   (ruby . t)
-   (sqlite . t)
-   (perl . t)
-   ))
-
-(setq org-src-fontify-natively t)
-
-(require 'org-install)  ;; What does this do again?
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(setq org-log-done t)
-
-; org clock mode.
-(setq org-clock-persist 'history)
-(org-clock-persistence-insinuate)
-
-#+END_SRC
-
-** daynotes
-
-#+BEGIN_SRC emacs-lisp
-(setq jvk/daynote-folder
-      (expand-file-name "~/Dropbox/writing/daynotes"))
-
-(defun jvk/joinpath (&rest paths)
-  "Join a sequence of path components, inserting the appropriate separator"
-  (let ((file (nth (1- (length paths)) paths))
-        (folders (butlast paths 1)))
-    (concat (mapconcat 'file-name-as-directory folders "") file)))
-
-(defun jvk/open-daynote ()
-  "Create or open a day note for today"
-  (interactive)
-  (let* ((ct (current-time))
-         (year (format-time-string "%Y" ct))
-         (ymd (format-time-string "%Y-%m-%d" ct))
-         (fname (jvk/joinpath jvk/daynote-folder year (concat ymd ".org"))))
-    (find-file fname)))
-#+END_SRC
-
-
-* Miscellaneous elisp snippets.
-
-Rename buffer and file it's visiting; taken from [[ http://steve.yegge.googlepages.com/my-dot-emacs-file]]
+Rename buffer and the file that it's visiting.
 
 #+BEGIN_SRC emacs-lisp
 (defun rename-file-and-buffer (new-name)
@@ -896,63 +660,3 @@ Rename buffer and file it's visiting; taken from [[ http://steve.yegge.googlepag
           (set-buffer-modified-p nil))))))
 #+END_SRC
 
-** Insert a datetime stamp.
-
-   For a project I had to insert specially formatted datetime stamps of the
-   form "2016-04-28 10:18 UTC+1". The special formatting of the timezone (not
-   "BST" or "+0100") required some custom crafting...
-
-#+BEGIN_SRC emacs-lisp
-(defun utc-offset-hours ()
-  "Return the offset from UTC in hours."
-  (interactive)
-  (let ((offset_sec (car (current-time-zone (current-time)))))
-    (/ offset_sec 3600)))
-
-(defun format-utc-offset-hours ()
-  "Format a string of the form UTC+x or UTC-x with x the UTC offset."
-  (interactive)
-  (format "UTC%+d" (utc-offset-hours)))
-
-;; TODO fold this into insert-current-date-time
-(setq current-date-time-format "%Y-%m-%d %H:%M")
-
-(defun insert-current-date-time ()
-  "insert the current date and time into current buffer."
-  (interactive)
-  (insert
-   (concat
-    (format-time-string current-date-time-format (current-time))
-    " "
-    (format-utc-offset-hours))))
-
-
-(defun yaml-mode-keys ()
-  (local-set-key (kbd "C-c C-d") 'insert-current-date-time))
-(add-hook 'yaml-mode-hook 'yaml-mode-keys)
-
-(defun jvk/calendar-iso-week-number (&optional date)
-  "ISO week number for a given date, default today."
-  (interactive)
-  (let* ((d (calendar-absolute-from-gregorian
-             (or date (calendar-current-date))))
-         (iso-date (calendar-iso-from-absolute d)))
-    (calendar-extract-month iso-date)))
-
-(defun jvk/calendar-print-iso-week-number ()
-  "Print the ISO week number"
-  (interactive)
-  (message "%d" (jvk/calendar-iso-week-number)))
-
-#+END_SRC
-
-Replace all carriage returns (^M) by line feed (^J) in a given buffer (makes
-editing logs easier)
-
-#+BEGIN_SRC emacs-lisp
-(defun jvk/remove-cr ()
-  "Replace carriage returns by newlines from current location until end of buffer"
-  (interactive)
-  (while (search-forward "" nil t)
-    (replace-match "\n" nil t)))
-#+END_SRC
