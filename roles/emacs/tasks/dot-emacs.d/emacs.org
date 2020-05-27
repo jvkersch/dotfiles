@@ -393,6 +393,8 @@ better).
 ** org-capture
 
 #+BEGIN_SRC emacs-lisp
+(setq jvk/gtd-file (concat org-directory "gtd.org"))
+
 (setq org-directory
       (file-name-as-directory
        (expand-file-name "~/Dropbox/Joris/writing")))
@@ -410,7 +412,7 @@ better).
 (defun gtd ()
   "Open GTD buffer"
   (interactive)
-  (find-file (concat org-directory "gtd.org")))
+  (find-file jvk/gtd-file))
 #+END_SRC
 
 
