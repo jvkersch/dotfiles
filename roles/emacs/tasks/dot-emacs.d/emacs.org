@@ -393,11 +393,10 @@ better).
 ** org-capture
 
 #+BEGIN_SRC emacs-lisp
-(setq jvk/gtd-file (concat org-directory "gtd.org"))
-
 (setq org-directory
       (file-name-as-directory
        (expand-file-name "~/Dropbox/Joris/writing")))
+(setq jvk/gtd-file (concat org-directory "gtd.org"))
 (setq org-default-notes-file (concat org-directory "/inbox.org"))
 
 (setq org-capture-templates
