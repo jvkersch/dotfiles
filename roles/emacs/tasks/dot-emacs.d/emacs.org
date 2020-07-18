@@ -81,10 +81,10 @@ hidden directory instead, so they're out of the way.
 Add ~/usr/local/bin~ for and ~\~/local/bin~ for locally installed utilities.
 
 #+BEGIN_SRC emacs-lisp
-(setq exec-path
-      (append exec-path
-              '("/usr/local/bin/")
-              '((expand-file-name "~/local/bin/"))))
+  ;; (setq exec-path
+  ;;       (append exec-path
+  ;;               '("/usr/local/bin/")
+  ;;               '((expand-file-name "~/local/bin/"))))
 #+END_SRC
 
 *** Visual mode
@@ -408,8 +408,7 @@ better).
 ** org-roam
 
 #+BEGIN_SRC emacs-lisp
-;; Install org-roam from local git checkout
-(add-to-list 'load-path (expand-file-name "org-roam" "~/src/org"))
+  (add-to-list 'load-path (expand-file-name "org-roam" "~/src/org"))
 (use-package org-roam
       :hook
       (after-init . org-roam-mode)
@@ -616,7 +615,7 @@ Not coding per se, but use [[https://wiki.archlinux.org/index.php/emacs#Syntax_H
 
 (defun add-good-python-path ()
   "Add the path to a decent Python installation."
-  (setq edm-path "~/.edm/envs/edm/bin")
+  (setq edm-path (expand-file-name "~/.edm/envs/edm/bin"))
   (add-to-list 'python-shell-exec-path edm-path)
   (add-to-list 'exec-path edm-path))
 

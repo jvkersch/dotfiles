@@ -20,6 +20,7 @@
 (depends-on "hasklig-mode")
 (depends-on "helm")
 (depends-on "hungry-delete")
+(depends-on "ivy")
 (depends-on "jedi")
 (depends-on "magit")
 (depends-on "markdown-mode")
