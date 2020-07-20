@@ -164,8 +164,7 @@ a neat and concise declarative manner.
 
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet
-  :config (yas-global-mode 1)
-  :bind (("M-<tab>" . yas-expand)))
+  :config (yas-global-mode 1))
 #+END_SRC
 
 *** undo-tree
