@@ -141,7 +141,14 @@ To view the content of a register, use M-x ~view-register~
 to or a file to open will narrow down successive choices.
 
 #+BEGIN_SRC emacs-lisp
-(ido-mode t)
+;;(ido-mode t)
+#+END_SRC
+
+
+*** Helm
+
+#+BEGIN_SRC emacs-lisp
+(helm-mode 1)
 #+END_SRC
 
 
@@ -336,6 +343,19 @@ from [[https://github.com/howardabrams/dot-files/blob/master/emacs-mac.org][Howa
             ("PENDING" . (:foreground "yellow"))
             ("DONE" . (:foreground "green"))
             ("CANCELLED" . (:foreground "lightblue"))))
+#+END_SRC
+
+
+** org-agenda
+
+Commands adapted from [[https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html][An Agenda for Life With Org Mode]].
+
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-files '("~/Dropbox/Joris/writing/"))
+(setq org-agenda-custom-commands
+      '(("c" "Simple agenda view"
+         ((agenda "")
+          (alltodo "")))))
 #+END_SRC
 
 
