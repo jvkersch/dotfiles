@@ -419,8 +419,12 @@ better).
 (setq org-default-notes-file (concat org-directory "/inbox.org"))
 
 (setq org-capture-templates
-      '(("t" "Todo" entry (file+headline jvk/gtd-file "Inbox")
-         "** TODO %?")))
+      '(("t" "Todo" entry (file+headline org-default-notes-file "Tasks")
+         "** TODO %?")
+        ("n" "Note" item (file+headline org-default-notes-file "Notes")
+         "%?")
+        ("1" "1-on-1" item (file+headline org-default-notes-file "1-on-1 meetings")
+         "%?")))
 #+END_SRC
 
 
