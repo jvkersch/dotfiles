@@ -85,10 +85,22 @@ export WORKON_HOME="$HOME/.edm/envs"
 # Third party environments. We want to keep those out of the PATH
 # until we need them.
 function activate_conda() {
-    local conda_sh="~/miniconda3/etc/profile.d/conda.sh"
+    local conda_sh="$HOME/miniconda3/etc/profile.d/conda.sh"
     if [ -f "$conda_sh" ]; then
 	source "$conda_sh"
     fi
+}
+
+function activate_edm() {
+    local edm="$HOME/local/edm"
+    if [ -d "$edm" ]; then
+	export PATH="$edm/bin:$PATH"
+    fi
+}
+activate_edm  # Active by default
+
+function activate_rust() {
+    export PATH="$HOME/.cargo/bin:$PATH"
 }
 
 function merge() {
@@ -112,7 +124,6 @@ function reset_screen() {
     xrandr --output "$screen" --off
     xrandr --output "$screen" --auto;
 }
-
 
 function mount_ipad_kindle() {
     mkdir -p ~/mount/ipad/kindle
