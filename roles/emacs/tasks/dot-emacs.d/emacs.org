@@ -351,7 +351,12 @@ from [[https://github.com/howardabrams/dot-files/blob/master/emacs-mac.org][Howa
 Commands adapted from [[https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html][An Agenda for Life With Org Mode]].
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-files '("~/Dropbox/Joris/writing/"))
+(setq org-agenda-files
+      '("~/Dropbox/Joris/writing/"
+        "~/Dropbox/Joris/writing/projects"
+        "~/Dropbox/Joris/writing/personal-projects"
+        "~/Dropbox/Joris/writing/areas-of-responsibility"))
+
 (setq org-agenda-custom-commands
       '(("c" "Simple agenda view"
          ((agenda "")
