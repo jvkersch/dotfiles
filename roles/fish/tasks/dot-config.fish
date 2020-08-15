@@ -1,7 +1,9 @@
 # Path management
 
-set PATH $PATH ~/.cask/bin
-set PATH $PATH ~/edm/bin
+# SETUVAR fish_user_paths:/home/jvankerschaver/local/miniconda3/bin/
+
+set -Ua user_paths_appended ~/.cask/bin
+
 
 # Key management
 
@@ -17,5 +19,20 @@ begin
 end
 
 function addkeys
-    ssh-add ~/.ssh/id_ecdsa_linux_2017
+    ssh-add ~/.ssh/id_rsa
+    ssh-add ~/.ssh/id_rsa_2016
 end
+
+# Convenient aliases
+alias R="edm run -- "
+alias P="edm run -e ls-platform -- "
+
+# Start emacs
+alias start_emacs="~/local/bin/emacs-26.3 &; disown"
+alias ec=emacsclient
+
+#
+alias start_dell="xrandr --output DP-4 --scale 2x2 --mode 2560x1440 --fb 5120x5040 --pos 0x0 --output eDP-1-1 --scale 1x1 --pos 640x2880"
+
+# Calibre books management
+alias sync-books="unison $HOME/Books/ ssh://pi@192.168.0.100/Books"
