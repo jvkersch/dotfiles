@@ -35,4 +35,11 @@ alias ec=emacsclient
 alias start_dell="xrandr --output DP-4 --scale 2x2 --mode 2560x1440 --fb 5120x5040 --pos 0x0 --output eDP-1-1 --scale 1x1 --pos 640x2880"
 
 # Calibre books management
-alias sync-books="unison $HOME/Books/ ssh://pi@192.168.0.100/Books"
+function sync-books
+    set -l calibre-server "pi@192.168.0.100"
+    set -l books-folder "$HOME/Books"
+    # Synchronize with local calibre-web install
+    unison $books-folder ssh://{$calibre-server}/Books
+    # Restart server
+    ssh $calibre-server 'cd dockerfiles/calibre-web && docker-compose restart'
+end
