@@ -36,10 +36,10 @@ alias start_dell="xrandr --output DP-4 --scale 2x2 --mode 2560x1440 --fb 5120x50
 
 # Calibre books management
 function sync-books
-    set -l calibre-server "pi@192.168.0.100"
-    set -l books-folder "$HOME/Books"
+    set -l calibre_server "pi@192.168.0.100"
+    set -l books_folder "$HOME/Books"
     # Synchronize with local calibre-web install
-    unison $books-folder ssh://{$calibre-server}/Books
+    unison $books_folder ssh://{$calibre_server}/Books
     # Restart server
-    ssh $calibre-server 'cd dockerfiles/calibre-web && docker-compose restart'
+    ssh $calibre_server 'cd dockerfiles/calibre-web && docker-compose restart'
 end
