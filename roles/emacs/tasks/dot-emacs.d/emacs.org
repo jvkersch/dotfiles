@@ -232,6 +232,18 @@ Delete all whitespace with one stroke of backspace.
 (use-package hungry-delete)
 #+END_SRC
 
+*** deft
+
+    Deft is an Emacs mode for quickly browsing, filtering, and editing
+    directories of plain text notes.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package deft
+    :bind ("<f8>" . deft)
+    :commands (deft)
+    :config (setq deft-directory "~/src/jvkersch/notes"
+                  deft-extensions '("md" "org")))
+#+END_SRC
 
 * Color themes
 
@@ -384,7 +396,7 @@ Show org-mode bullets as UTF-8 characters.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-bullets
-  :hook org-mode-hook)
+  :hook (org-mode . org-bullets-mode))
 #+END_SRC
 
 
