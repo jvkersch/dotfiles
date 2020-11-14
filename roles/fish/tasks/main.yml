@@ -6,3 +6,4 @@
   loop:
     - { src: dot-config.fish, dest: ~/.config/fish/config.fish }
     - { src: conda.fish, dest: ~/.config/fish/conda.fish }
+    - { src: edm.fish, dest: ~/.config/fish/edm.fish }

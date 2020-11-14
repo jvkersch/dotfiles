@@ -4,6 +4,8 @@
 
 set -Ua user_paths_appended ~/.cask/bin
 
+set -u _EDM_PATH "$HOME/edm/bin"
+contains $_EDM_PATH $fish_user_paths; or set -Ua fish_user_paths $_EDM_PATH
 
 # Key management
 
@@ -49,4 +51,5 @@ function sync-books
 end
 
 # Set up conda paths and autocompletions
-source conda.fish
+source ~/.config/fish/conda.fish
+source ~/.config/fish/edm.fish
