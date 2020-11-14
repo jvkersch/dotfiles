@@ -5,3 +5,4 @@
   check_mode: no
   loop:
     - { src: dot-config.fish, dest: ~/.config/fish/config.fish }
+    - { src: conda.fish, dest: ~/.config/fish/conda.fish }

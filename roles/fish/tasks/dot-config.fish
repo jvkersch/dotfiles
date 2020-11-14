@@ -47,3 +47,6 @@ function sync-books
     # Restart server
     ssh $calibre_server 'cd dockerfiles/calibre-web && docker-compose restart'
 end
+
+# Set up conda paths and autocompletions
+source conda.fish
