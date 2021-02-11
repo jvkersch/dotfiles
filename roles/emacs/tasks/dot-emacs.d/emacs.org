@@ -237,13 +237,19 @@ Delete all whitespace with one stroke of backspace.
     Deft is an Emacs mode for quickly browsing, filtering, and editing
     directories of plain text notes.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :results silent
   (use-package deft
     :bind ("<f8>" . deft)
-    :commands (deft)
-    :config (setq deft-directory "~/src/jvkersch/notes"
-                  deft-extensions '("md" "org")))
+    :init (setq deft-directory "~/src/jvkersch/notes"
+                deft-extensions '("org" "md")
+                deft-use-filename-as-title t))
+
+  (use-package zetteldeft
+    :after deft
+    :config
+      (zetteldeft-set-classic-keybindings))
 #+END_SRC
+
 
 * Color themes
 
