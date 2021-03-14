@@ -155,3 +155,6 @@ bindsym $mod+r mode "resize"
 bar {
         status_command i3status | ~/.config/i3status/status_helper
 }
+
+# Start pcloud
+exec /usr/bin/pcloud
