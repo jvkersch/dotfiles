@@ -87,6 +87,13 @@ Add ~/usr/local/bin~ for and ~\~/local/bin~ for locally installed utilities.
   ;;               '((expand-file-name "~/local/bin/"))))
 #+END_SRC
 
+*** Special fonts
+
+Use something other than the (ugly) default for Korean
+#+BEGIN_SRC emacs-lisp
+(set-fontset-font "fontset-default" 'hangul "Noto Sans CJK KR Regular")
+#+END_SRC
+
 *** Visual mode
 
 Visual line mode turns on line wrapping and causes simple editing commands
