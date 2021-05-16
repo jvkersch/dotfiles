@@ -442,7 +442,7 @@ better).
 (setq org-directory
       (file-name-as-directory
        (expand-file-name "~/pCloudDrive/org-documents")))
-(setq jvk/gtd-file (concat org-directory "gtd.org"))
+(setq jvk/gtd-file (concat org-directory "gtd-personal.org"))
 (setq org-default-notes-file (concat org-directory "/inbox.org"))
 
 (setq org-capture-templates
