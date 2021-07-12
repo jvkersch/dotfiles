@@ -354,20 +354,23 @@ from [[https://github.com/howardabrams/dot-files/blob/master/emacs-mac.org][Howa
 ** org-todo
 
 #+BEGIN_SRC emacs-lisp
-(setq org-log-done t)
+  (setq org-log-done t)
 
-; org clock mode.
-(setq org-clock-persist 'history)
-(org-clock-persistence-insinuate)
+  ; org clock mode.
+  (setq org-clock-persist 'history)
+  (org-clock-persistence-insinuate)
 
-(setq org-todo-keywords
-      '((sequence "TODO" "IN-PROGRESS" "PENDING" "|" "DONE" "CANCELLED")))
-(setq org-todo-keyword-faces
-          '(("TODO" . (:foreground "red"))
-            ("IN-PROGRESS" . (:foreground "orange"))
-            ("PENDING" . (:foreground "yellow"))
-            ("DONE" . (:foreground "green"))
-            ("CANCELLED" . (:foreground "lightblue"))))
+  (setq org-todo-keywords
+        '((sequence "TODO" "IN-PROGRESS" "PENDING" "|" "DONE" "CANCELLED")))
+
+
+  (setq org-todo-keyword-faces
+      '(("TODO" :foreground "red")
+        ("IN-PROGRESS" . (:foreground "orange" :weight bold))
+        ("ON-DECK" . (:foreground "lightblue" :weight bold))
+        ("WAITING" . (:foreground "yellow" :weight bold))
+        ("DONE" :foreground "green")))
+
 #+END_SRC
 
 
