@@ -27,6 +27,7 @@
 (depends-on "markdown-mode")
 (depends-on "org-bullets")
 (depends-on "org-download")
+(depends-on "org-journal")
 (depends-on "pallet")
 (depends-on "py-isort")
 (depends-on "python-docstring")

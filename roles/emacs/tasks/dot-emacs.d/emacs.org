@@ -477,6 +477,16 @@ better).
   (org-roam-setup))
 #+END_SRC
 
+
+** org-journal
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-journal
+   :init
+   (setq org-journal-dir "~/OrgJournal"))
+#+END_SRC
+   
+
 ** Miscellaneous customizations for org-mode
 
 #+BEGIN_SRC emacs-lisp
