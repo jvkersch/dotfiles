@@ -556,6 +556,19 @@ The search terminates when the first property is encountered."
 
 * Coding modes
 
+  
+** AucTeX
+
+   Adapted from [[https://github.com/jwiegley/use-package/issues/379#issuecomment-246161500][use-package#379]].
+   
+#+BEGIN_SRC emacs-lisp
+(use-package tex
+  :defer t
+  :config
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t))
+#+END_SRC
+
 
 ** Terraform scripts
 
