@@ -14,10 +14,14 @@
 ** Package management
 
  #+BEGIN_SRC emacs-lisp
- (require 'cask (expand-file-name "~/.cask/cask.el"))
- (cask-initialize)
- (require 'pallet)
- (pallet-mode t)
+   ;; (require 'cask (expand-file-name "~/.cask/cask.el"))
+   ;; (cask-initialize)
+   ;; (require 'pallet)
+   ;; (pallet-mode t)
+
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/"))
  #+END_SRC
 
 
@@ -87,9 +91,27 @@ Add ~/usr/local/bin~ for and ~\~/local/bin~ for locally installed utilities.
   ;;               '((expand-file-name "~/local/bin/"))))
 #+END_SRC
 
+Open ~.emacs.d~ directory.
+
+
+#+BEGIN_SRC emacs-lisp
+  (defun emacs-home-directory ()
+    (interactive)
+    (find-file (expand-file-name "~/.emacs.d")))
+#+END_SRC
+
+
 *** Special fonts
 
-Use something other than the (ugly) default for Korean
+    Use a more visually pleasing default font (needs to be installed externally)
+
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'default nil :font "cousine")
+(set-frame-font "cousine" nil t)
+#+END_SRC
+
+    Use something other than the (ugly) default for Korean
+
 #+BEGIN_SRC emacs-lisp
 (set-fontset-font "fontset-default" 'hangul "Noto Sans CJK KR Regular")
 #+END_SRC
@@ -155,7 +177,20 @@ to or a file to open will narrow down successive choices.
 *** Helm
 
 #+BEGIN_SRC emacs-lisp
-(helm-mode 1)
+;;(helm-mode 1)
+#+END_SRC
+
+*** Access to shared files
+
+    Set the base path for my pCloud drive, regardless of the platform we're on.
+
+#+BEGIN_SRC emacs-lisp
+  (setq PCLOUD
+      (file-name-as-directory
+       (cond
+        ((eq system-type 'windows-nt) "P:/Shared")
+        ((eq system-type 'darwin) "~/pCloud Drive")
+        (t "~/pCloudDrive"))))
 #+END_SRC
 
 
@@ -177,8 +212,9 @@ a neat and concise declarative manner.
 [[https://github.com/capitaomorte/yasnippet/blob/master/README.mdown][yasnippet]] is a templating system for Emacs.
 
 #+BEGIN_SRC emacs-lisp
-(use-package yasnippet
-  :config (yas-global-mode 1))
+  (use-package yasnippet
+    :ensure t
+    :config (yas-global-mode 1))
 #+END_SRC
 
 *** undo-tree
@@ -187,12 +223,13 @@ Represent successive undos and redos as a tree, which can be navigated with the
 up and down arrow keys.
 
  #+BEGIN_SRC emacs-lisp
-(use-package undo-tree
-  :init
-  (progn
-    (global-undo-tree-mode)
-    (setq undo-tree-visualizer-timestamps t)
-    (setq undo-tree-visualizer-diff t)))
+   (use-package undo-tree
+     :ensure t
+     :init
+     (progn
+       (global-undo-tree-mode)
+       (setq undo-tree-visualizer-timestamps t)
+       (setq undo-tree-visualizer-diff t)))
  #+END_SRC
 
 *** bm (visual bookmarks)
@@ -201,18 +238,19 @@ Leave visual bookmarks in your code via [[https://github.com/joodland/bm][bm]]. 
 those of ... Visual Studio.
 
 #+BEGIN_SRC emacs-lisp
-(use-package bm
-  :init
-  (progn
-    (global-set-key (kbd "<C-f2>") 'bm-toggle)
-    (global-set-key (kbd "<f2>")   'bm-next)
-    (global-set-key (kbd "<S-f2>") 'bm-previous)
-    ;; Click on fringe to toggle bookmarks, and use mouse wheel to move between them.
-    (global-set-key (kbd "<left-fringe> <mouse-5>") 'bm-next-mouse)
-    (global-set-key (kbd "<left-fringe> <mouse-4>") 'bm-previous-mouse)
-    (global-set-key (kbd "<left-fringe> <mouse-1>") 'bm-toggle-mouse)
-    (setq bm-in-lifo-order t)
-    (setq temporary-bookmark-p t)))
+  (use-package bm
+    :ensure t
+    :init
+    (progn
+      (global-set-key (kbd "<C-f2>") 'bm-toggle)
+      (global-set-key (kbd "<f2>")   'bm-next)
+      (global-set-key (kbd "<S-f2>") 'bm-previous)
+      ;; Click on fringe to toggle bookmarks, and use mouse wheel to move between them.
+      (global-set-key (kbd "<left-fringe> <mouse-5>") 'bm-next-mouse)
+      (global-set-key (kbd "<left-fringe> <mouse-4>") 'bm-previous-mouse)
+      (global-set-key (kbd "<left-fringe> <mouse-1>") 'bm-toggle-mouse)
+      (setq bm-in-lifo-order t)
+      (setq temporary-bookmark-p t)))
 #+END_SRC
 
 *** ace-isearch
@@ -224,11 +262,12 @@ Refer to windows by number.
 | C-u C-u M-o <num> | Delete window <num>             |
 
 #+BEGIN_SRC emacs-lisp
-(use-package ace-isearch
-  :init
-  (setq enable-recursive-minibuffers t)
-  (minibuffer-depth-indicate-mode 1)
-  :bind (("M-o" . ace-window)))
+  (use-package ace-isearch
+    :ensure t
+    :init
+    (setq enable-recursive-minibuffers t)
+    (minibuffer-depth-indicate-mode 1)
+    :bind (("M-o" . ace-window)))
 #+END_SRC
 
 *** Hungry delete
@@ -236,7 +275,8 @@ Refer to windows by number.
 Delete all whitespace with one stroke of backspace.
 
 #+BEGIN_SRC emacs-lisp
-(use-package hungry-delete)
+  (use-package hungry-delete
+    :ensure t)
 #+END_SRC
 
 *** deft
@@ -246,10 +286,11 @@ Delete all whitespace with one stroke of backspace.
 
 #+BEGIN_SRC emacs-lisp :results silent
   (use-package deft
+    :ensure t
     :bind ("<f8>" . deft)
     :init (setq deft-directory "~/src/jvkersch/notes"
-                deft-extensions '("org" "md")
-                deft-use-filename-as-title t))
+		deft-extensions '("org" "md")
+		deft-use-filename-as-title t))
 
   (use-package zetteldeft
     :after deft
@@ -335,19 +376,22 @@ from [[https://github.com/howardabrams/dot-files/blob/master/emacs-mac.org][Howa
 ** Basic Org customization
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook
-          (lambda ()
-            (setq-default indent-tabs-mode nil)))
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (setq-default indent-tabs-mode nil)))
 
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cc" 'org-capture)
-(global-set-key "\C-cb" 'org-switchb)
+  (setq org-directory
+      (file-name-as-directory (concat PCLOUD "org-documents")))
 
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key "\C-cc" 'org-capture)
+  (global-set-key "\C-cb" 'org-switchb)
 
-(setq org-tags-column -90)
-(setq org-src-fontify-natively t)
+  (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+
+  (setq org-tags-column -90)
+  (setq org-src-fontify-natively t)
 #+END_SRC
 
 
@@ -379,8 +423,7 @@ from [[https://github.com/howardabrams/dot-files/blob/master/emacs-mac.org][Howa
 Commands adapted from [[https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html][An Agenda for Life With Org Mode]].
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files
-        '("~/pCloudDrive/org-documents/"))
+  (setq org-agenda-files (list org-directory))  ;; necessary?
 
   (setq org-agenda-custom-commands
         '(("c" "Simple agenda view"
@@ -405,11 +448,12 @@ Commands adapted from [[https://blog.aaronbieber.com/2016/09/24/an-agenda-for-li
 
 ** org-bullets
 
-Show org-mode bullets as UTF-8 characters. 
+Show org-mode bullets as UTF-8 characters.
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-bullets
-  :hook (org-mode . org-bullets-mode))
+  (use-package org-bullets
+    :ensure t
+    :hook (org-mode . org-bullets-mode))
 #+END_SRC
 
 
@@ -421,40 +465,38 @@ directories. The ~org-download-method~ customization is taken directly from the
 better).
 
 #+BEGIN_SRC emacs-lisp
-(defun jvk/org-download-method (link)
-  "Provide file location to store resources."
-  (let ((filename
-         (file-name-nondirectory
-          (car (url-path-and-query
-                (url-generic-parse-url link)))))
-        (dirname (file-name-sans-extension (buffer-name)) ))
-    (unless (file-exists-p dirname)
-      (make-directory dirname))
-    (message "Saving file '%s' to directory '%s'..." filename dirname)
-    (expand-file-name filename dirname)))
+  (defun jvk/org-download-method (link)
+    "Provide file location to store resources."
+    (let ((filename
+	   (file-name-nondirectory
+	    (car (url-path-and-query
+		  (url-generic-parse-url link)))))
+	  (dirname (file-name-sans-extension (buffer-name)) ))
+      (unless (file-exists-p dirname)
+	(make-directory dirname))
+      (message "Saving file '%s' to directory '%s'..." filename dirname)
+      (expand-file-name filename dirname)))
 
-(use-package org-download
-  :init
-  (setq org-download-method 'jvk/org-download-method))
+  (use-package org-download
+    :ensure t
+    :init
+    (setq org-download-method 'jvk/org-download-method))
 #+END_SRC
 
 
 ** org-capture
 
 #+BEGIN_SRC emacs-lisp
-(setq org-directory
-      (file-name-as-directory
-       (expand-file-name "~/pCloudDrive/org-documents")))
-(setq jvk/gtd-file (concat org-directory "gtd.org"))
-(setq org-default-notes-file (concat org-directory "/inbox.org"))
+  (setq jvk/gtd-file (concat org-directory "gtd.org"))
+  (setq org-default-notes-file (concat org-directory "inbox.org"))
 
-(setq org-capture-templates
-      '(("t" "Todo" entry (file+headline org-default-notes-file "Tasks")
-         "** TODO %?")
-        ("n" "Note" item (file+headline org-default-notes-file "Notes")
-         "%?")
-        ("1" "1-on-1" item (file+headline org-default-notes-file "1-on-1 meetings")
-         "%?")))
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline org-default-notes-file "Tasks")
+           "** TODO %?")
+          ("n" "Note" item (file+headline org-default-notes-file "Notes")
+           "%?")
+          ("1" "1-on-1" item (file+headline org-default-notes-file "1-on-1 meetings")
+           "%?")))
 #+END_SRC
 
 
@@ -480,12 +522,20 @@ better).
 
 ** org-journal
 
+   Default keybindings:
+
+   - C-c C-f - go to the next journal file.
+   - C-c C-b - go to the previous journal file.
+   - C-c C-j - insert a new entry into the current journal file (creates the file if not present).
+   - C-c C-s - search the journal for a string.
+
 #+BEGIN_SRC emacs-lisp
   (use-package org-journal
-   :init
-   (setq org-journal-dir "~/OrgJournal"))
+    :ensure t
+    :init
+    (setq org-journal-dir (concat org-directory "journal")))
 #+END_SRC
-   
+
 
 ** Miscellaneous customizations for org-mode
 
@@ -556,17 +606,17 @@ The search terminates when the first property is encountered."
 
 * Coding modes
 
-  
+
 ** AucTeX
 
    Adapted from [[https://github.com/jwiegley/use-package/issues/379#issuecomment-246161500][use-package#379]].
-   
+
 #+BEGIN_SRC emacs-lisp
-(use-package tex
-  :defer t
-  :config
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t))
+  (use-package tex
+    :defer t
+    :config
+    (setq TeX-auto-save t)
+    (setq TeX-parse-self t))
 #+END_SRC
 
 
@@ -575,8 +625,9 @@ The search terminates when the first property is encountered."
 Open Terraform scripts (.tf) in HCL mode
 
 #+BEGIN_SRC emacs-lisp
-(use-package hcl-mode
-  :mode (("\\.tf" . hcl-mode)))
+  (use-package hcl-mode
+    :ensure t
+    :mode (("\\.tf" . hcl-mode)))
 #+END_SRC
 
 
@@ -635,19 +686,10 @@ Open Sage Cython files (.spyx) as well as regular Cython/Pyrex files (.pyx) in
 cython mode.
 
 #+BEGIN_SRC emacs-lisp
-(use-package cython-mode
-  :mode (("\\.spyx" . cython-mode)
-         ("\\.pyx" . cython-mode)))
-#+END_SRC
-
-
-** Octave mode
-
-Associate the .m extension with Matlab instead of Objective C.
-
-#+BEGIN_SRC emacs-lisp
-(use-package octave-mode
-  :mode (("\\.m$" . octave-mode)))
+  (use-package cython-mode
+    :ensure t
+    :mode (("\\.spyx" . cython-mode)
+	   ("\\.pyx" . cython-mode)))
 #+END_SRC
 
 
@@ -726,7 +768,7 @@ Taken from [[[https://bitbucket.org/durin42/nosemacs]]].
 
 #+BEGIN_SRC emacs-lisp
 ;; Golang
-(require 'go-mode)
+;;(require 'go-mode)
 (add-hook 'go-mode-hook
           (lambda ()
             (add-hook 'before-save-hook 'gofmt-before-save)
@@ -755,4 +797,3 @@ Rename buffer and the file that it's visiting.
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
 #+END_SRC
-
