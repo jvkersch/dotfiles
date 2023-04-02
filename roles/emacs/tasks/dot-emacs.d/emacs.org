@@ -702,8 +702,33 @@ graph.
 
 ** org-cite
 
+   Configuration adapted from:
+
+   - [[https://kristofferbalintona.me/posts/202206141852/]]
+   - [[https://blog.tecosaur.com/tmio/2021-07-31-citations.html]]
+   
 #+BEGIN_SRC emacs-lisp
+  (require 'oc-csl)
   (setq org-cite-global-bibliography '("~/Dropbox/org-documents/references.bib"))
+  (setq org-cite-export-processors
+        '((latex . biblatex)                               
+          (t . (csl "harvard-cite-them-right.csl"))))
+
+  (setq org-cite-csl-styles-dir
+        (expand-file-name "~/Zotero/styles/"))
+
+  ;; (use-package citar
+  ;;   :no-require
+  ;;   :custom
+  ;;   (citar-bibliography '("~/Dropbox/org-documents/references.bib"))
+  ;;   (org-cite-insert-processor 'citar)
+  ;;   (org-cite-follow-processor 'citar)
+  ;;   (org-cite-activate-processor 'citar)
+  ;;   (citar-bibliography org-cite-global-bibliography)
+  ;;   ;; optional: org-cite-insert is also bound to C-c C-x C-@
+  ;;   :bind
+  ;;   (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
+
 #+END_SRC
 
 ** Miscellaneous customizations for org-mode
