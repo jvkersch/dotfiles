@@ -209,8 +209,8 @@ to or a file to open will narrow down successive choices.
 *** avy-mode
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-:") 'avy-goto-char)
-  (global-set-key (kbd "C-'") 'avy-goto-char-2)
+  (global-set-key (kbd "C-M-:") 'avy-goto-char)
+  (global-set-key (kbd "C-M-'") 'avy-goto-char-2)
   (global-set-key (kbd "M-g f") 'avy-goto-line)
   (global-set-key (kbd "M-g w") 'avy-goto-word-1)
   (global-set-key (kbd "M-g e") 'avy-goto-word-0)
@@ -244,18 +244,11 @@ to or a file to open will narrow down successive choices.
         (t "~/pCloudDrive"))))
 #+END_SRC
 
-
 ** Common packages
 
 *** yasnippet
 
 [[https://github.com/capitaomorte/yasnippet/blob/master/README.mdown][yasnippet]] is a templating system for Emacs.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet
-    :ensure t
-    :config (yas-global-mode 1))
-#+END_SRC
 
 *** undo-tree
 
@@ -300,6 +293,8 @@ Refer to windows by number.
 | M-o <num>         | Jump to window <num>            |
 | C-u M-o <num>     | Switch current window and <num> |
 | C-u C-u M-o <num> | Delete window <num>             |
+
+I prefer M-o x for delete, M-o w for swap, 
 
 #+BEGIN_SRC emacs-lisp
   (use-package ace-isearch
@@ -943,11 +938,13 @@ Not coding per se, but use [[https://wiki.archlinux.org/index.php/emacs#Syntax_H
 
 ** Python
 
+   C-c C-c: send file to interpreter
+   
 #+BEGIN_SRC emacs-lisp
   ;;; Python-specific customizations.
   (add-hook 'python-mode-hook     'flycheck-mode)
   (add-hook 'python-mode-hook     'python-docstring-mode)
-
+  
 (setenv "WORKON_HOME" "~/miniforge3/envs/")
 
   (use-package elpy
@@ -968,13 +965,6 @@ Not coding per se, but use [[https://wiki.archlinux.org/index.php/emacs#Syntax_H
           (purecopy "[ \t]*\\([-–!|#%;>*·•‣⁃◦]+:?[ \t]*\\)*")))
   (add-hook 'python-mode-hook 'adjust-adaptive-fill-regexp)
 
-  (defun add-good-python-path ()
-    "Add the path to a decent Python installation."
-    (setq edm-path (expand-file-name "~/.edm/envs/edm/bin"))
-    (add-to-list 'python-shell-exec-path edm-path)
-    (add-to-list 'exec-path edm-path))
-
-  (add-hook 'python-mode-hook 'add-good-python-path)
 #+END_SRC
 
 Taken from [[[https://bitbucket.org/durin42/nosemacs]]].
