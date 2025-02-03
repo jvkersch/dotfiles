@@ -3,26 +3,23 @@
 #+EMAIL: joris.vankerschaver@gmail.com
 #+STARTUP: showall
 
-- Run `cask install` from within .emacs.d folder.
-- From within Emacs, run "M-x jedi:install-server"
-   (uses system Python by default; needs virtualenv)
 
 * Generic Emacs
 
 ** Package management
 
  #+BEGIN_SRC emacs-lisp
-   ;; (require 'cask (expand-file-name "~/.cask/cask.el"))
-   ;; (cask-initialize)
-   ;; (require 'pallet)
-   ;; (pallet-mode t)
-
    (require 'package)
-   (add-to-list 'package-archives
-                '("melpa-stable" . "http://stable.melpa.org/packages/"))
-   (add-to-list 'package-archives
-                '("melpa" . "http://melpa.org/packages/"))
- #+END_SRC
+
+   (setq package-archives '(("org"       . "http://orgmode.org/elpa/")
+                            ("gnu"       . "http://elpa.gnu.org/packages/")
+                            ("melpa"     . "http://melpa.org/packages/")))
+
+
+   (package-initialize)
+   (package-refresh-contents)
+#+END_SRC
+
 
 ** use-package
 
@@ -96,4 +93,95 @@ hidden directory instead, so they're out of the way.
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+END_SRC
+
+
+** Packages
+
+#+BEGIN_SRC emacs-lisp
+  (use-package avy
+    :ensure t
+    :bind
+    (("C-:"   . avy-goto-char)     ;; Quickly jump to a character
+     ("C-'"   . avy-goto-char-2)   ;; Quickly jump to a sequence of two characters
+     ("M-g f" . avy-goto-line)     ;; Quickly jump to a line
+     ("M-g w" . avy-goto-word-1))  ;; Quickly jump to the beginning of a word
+    :config
+    (setq avy-background t)        ;; Dim background during selection
+    (setq avy-style 'at-full))     ;; Highlight style for avy (e.g., 'at-full', 'at', etc.)
+#+END_SRC
+
+*** ace-window
+
+Keybindings to easily and intuitively switch windows.
+
+| Key | Action                                       |
+|-----+----------------------------------------------|
+| x   | Delete window                                |
+| m   | Swap windows                                 |
+| M   | Move window                                  |
+| c   | Copy window                                  |
+| j   | Select buffer                                |
+| n   | Select the previous window                   |
+| u   | Select buffer in the other window            |
+| c   | Split window fairly, vertically/horizontally |
+| v   | Split window vertically                      |
+| b   | Split window horizontally                    |
+| o   | Maximize current window                      |
+| ?   | Show these command bindings                  |
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+    :ensure t
+    :bind (("M-o" . ace-window)))
+#+END_SRC
+
+*** ace-isearch
+
+Refer to windows by number.
+
+| M-o <num>         | Jump to window <num>            |
+| C-u M-o <num>     | Switch current window and <num> |
+| C-u C-u M-o <num> | Delete window <num>             |
+
+I prefer M-o x for delete, M-o w for swap, 
+
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package ace-isearch
+  ;;   :ensure t
+  ;;   :init
+  ;;   (setq enable-recursive-minibuffers t)
+  ;;   (minibuffer-depth-indicate-mode 1)
+  ;;   :bind (("M-o" . ace-window)))
+#+END_SRC
+
+*** undo-tree
+
+Represent successive undos and redos as a tree, which can be navigated with the
+up and down arrow keys.
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package undo-tree
+     :ensure t
+     :init
+     (progn
+       (global-undo-tree-mode)
+       (setq undo-tree-visualizer-timestamps t)
+       (setq undo-tree-visualizer-diff t)))
+ #+END_SRC
+
+** The rest
+
+#+BEGIN_SRC emacs-lisp
+  (setq emacs-config-files '("theme.org"
+                             "org-mode.org"
+                             "coding.org"))
+
+  (dolist (file emacs-config-files)
+    (org-babel-load-file
+     (file-truename
+      (expand-file-name file user-emacs-directory))))
+#+END_SRC
+
+
+
 
