@@ -1,0 +1,52 @@
+#+TITLE: Coding modes
+#+AUTHOR: Joris Vankerschaver
+#+EMAIL: joris.vankerschaver@gmail.com
+#+STARTUP: showall
+
+** Magit
+
+#+BEGIN_SRC emacs-lisp
+  (use-package transient
+    :ensure t)
+
+  (use-package magit
+    :ensure t
+    :after transient
+    :bind (("C-x g" . magit-status)
+           ("C-x C-g" . magit-status)))
+#+END_SRC
+
+#+RESULTS:
+: magit-status
+
+** Quarto
+
+#+BEGIN_SRC emacs-lisp
+  (use-package quarto-mode
+     :mode (("\\.Rmd" . poly-quarto-mode)))
+#+END_SRC   
+
+** AucTeX
+
+   Adapted from [[https://github.com/jwiegley/use-package/issues/379#issuecomment-246161500][use-package#379]].
+
+#+BEGIN_SRC emacs-lisp
+  (use-package latex
+    :defer auctex
+    :config
+    (setq TeX-auto-save t)
+    (setq TeX-parse-self t)
+
+    (push
+     '("latexmk" "latexmk --xelatex %s" TeX-run-TeX nil t
+       :help "Run latexmk on file")
+     TeX-command-list)
+    (setq TeX-command-default "latexmk")
+    (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+    (setq TeX-view-program-list
+      '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))))
+#+END_SRC
+
+** Nextflow
+
+#+BEGIN_SRC emacs-lisp

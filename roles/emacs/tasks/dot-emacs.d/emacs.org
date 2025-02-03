@@ -1,28 +1,25 @@
-#+TITLE: My Emacs configuration file
+﻿#+TITLE: My Emacs configuration file
 #+AUTHOR: Joris Vankerschaver
 #+EMAIL: joris.vankerschaver@gmail.com
 #+STARTUP: showall
 
-- Run `cask install` from within .emacs.d folder.
-- From within Emacs, run "M-x jedi:install-server"
-   (uses system Python by default; needs virtualenv)
 
 * Generic Emacs
 
 ** Package management
 
  #+BEGIN_SRC emacs-lisp
-   ;; (require 'cask (expand-file-name "~/.cask/cask.el"))
-   ;; (cask-initialize)
-   ;; (require 'pallet)
-   ;; (pallet-mode t)
-
    (require 'package)
-   (add-to-list 'package-archives
-                '("melpa-stable" . "http://stable.melpa.org/packages/"))
-   (add-to-list 'package-archives
-                '("melpa" . "http://melpa.org/packages/"))
- #+END_SRC
+
+   (setq package-archives '(("org"       . "http://orgmode.org/elpa/")
+                            ("gnu"       . "http://elpa.gnu.org/packages/")
+                            ("melpa"     . "http://melpa.org/packages/")))
+
+
+   (package-initialize)
+   (package-refresh-contents)
+#+END_SRC
+
 
 ** use-package
 
@@ -72,19 +69,22 @@ Disable C-x C-c to quit emacs, since it is too easy to hit those keys by
 mistake. To quit Emacs, use an explicit M-x ~kill-emacs~.
 
 #+BEGIN_SRC emacs-lisp
-(defun disable-exit-keys ()
-  (message "To exit emacs, use M-x kill-emacs"))
-(global-set-key (kbd "C-x C-c") 'disable-exit-keys)
+  (defun disable-exit-keys ()
+  (interactive)
+    (message "To exit emacs, use M-x kill-emacs"))
+  (global-set-key (kbd "C-x C-c") 'disable-exit-keys)
 #+END_SRC
 
 Show Emacs with a slightly larger screen. I should probably retire this and
 have the window manager take care of this instead.
 
 #+BEGIN_SRC emacs-lisp
-(when (display-graphic-p)
-  (if (> (x-display-pixel-width) 1280)
-      (add-to-list 'default-frame-alist (cons 'width 100))
-    (add-to-list 'default-frame-alist (cons 'width 80))))
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  
+    ;; (when (display-graphic-p)
+    ;;     (if (> (x-display-pixel-width) 1280)
+    ;;         (add-to-list 'default-frame-alist (cons 'width 100))
+    ;;       (add-to-list 'default-frame-alist (cons 'width 80))))
 #+END_SRC
 
 By default Emacs creates backups in the current directory. Create them in a
@@ -95,160 +95,64 @@ hidden directory instead, so they're out of the way.
 #+END_SRC
 
 
-#+BEGIN_SRC emacs-lisp
-(defun conda-env-binpath (&optional envname)
-  (interactive "P")
-  (expand-file-name
-   (if (not (eq envname nil))
-       (file-name-concat "~/miniforge/envs" envname "bin")
-     "~/miniforge3/bin")))
-
-(when (memq window-system '(mac ns x))
-   (exec-path-from-shell-initialize))
-
-(setq exec-path
-   (append exec-path (list (conda-env-binpath))))
-      ;; (setq exec-path
-          ;;       (append exec-path
-          ;;               '("/opt/homebrew/bin/")
-          ;;               '((expand-file-name "~/.cargo/bin"))))
-
-          ;; (setenv "PATH" (concat (getenv "PATH") ":/opt/homebrew/bin:~/.cargo/bin"))
-
-
-
-
-#+END_SRC
-
-
-Open ~.emacs.d~ directory.
-
+** Packages
 
 #+BEGIN_SRC emacs-lisp
-  (defun emacs-home-directory ()
-    (interactive)
-    (find-file (expand-file-name "~/.emacs.d")))
-#+END_SRC
-
-
-*** Special fonts
-
-    Use something other than the (ugly) default for Korean
-
-#+BEGIN_SRC emacs-lisp
-(set-fontset-font "fontset-default" 'hangul "Noto Sans CJK KR Regular")
-#+END_SRC
-
-
-    Use a more visually pleasing default font (needs to be installed externally)
-
-#+BEGIN_SRC emacs-lisp
-  ;; (set-face-attribute 'default nil :font "cousine")
-  ;; (set-frame-font "cousine" nil t)
-  ;; (set-face-attribute 'default nil :height 140)
-#+END_SRC
-
-
-*** Visual mode
-
-Visual line mode turns on line wrapping and causes simple editing commands
-to act on visual lines, rather than logical lines.
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
-(setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
-#+END_SRC
-
-*** Line numbers
-
-Show line numbers in the status line, show column numbers as well, and set the
-fill column (the column beyond which line wrapping should happen) to
-something sensible for coding.
-
-#+BEGIN_SRC emacs-lisp
-(setq line-number-mode t)
-(setq column-number-mode t)
-(setq-default fill-column 79)
-#+END_SRC
-
-Automatically add a newline on the last line when there is none.
-
-#+BEGIN_SRC emacs-lisp
-(setq require-final-newline t)
-#+END_SRC
-
-*** CUA mode
-
-Enable [[https://www.emacswiki.org/emacs/CuaMode][CUA mode]] (Common User Access), allows for more flexible selections,
-rectangle selection using C-RET, easy access to registers, and more. It comes
-bundled with Emacs.
-
-Some useful [[http://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html#CUA-Bindings][CUA keybindings]]:
-
-|-----------+--------------------------------------------|
-| C-RET     | Start in CUA rectangle mode                |
-| C-S-SPC   | Copy text to global mark                   |
-| C-1 C-w   | Kill, yank, copy, etc to numbered register |
-|-----------+--------------------------------------------|
-
-To view the content of a register, use M-x ~view-register~
-
-#+BEGIN_SRC emacs-lisp
-(cua-selection-mode t)
-#+END_SRC
-
-*** ido-mode
-
-[[https://www.emacswiki.org/emacs/InteractivelyDoThings][Interactively Do Things]]: typing the first few characters of a buffer to switch
-to or a file to open will narrow down successive choices.
-
-#+BEGIN_SRC emacs-lisp
-;;(ido-mode t)
-#+END_SRC
-
-*** avy-mode
-
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-M-:") 'avy-goto-char)
-  (global-set-key (kbd "C-M-'") 'avy-goto-char-2)
-  (global-set-key (kbd "M-g f") 'avy-goto-line)
-  (global-set-key (kbd "M-g w") 'avy-goto-word-1)
-  (global-set-key (kbd "M-g e") 'avy-goto-word-0)
-#+END_SRC
-
-*** Ivy-mode
-
-    From the manual:
-
-    "Ivy is for quick and easy selection from a list. When Emacs prompts for a
-    string from a list of several possible choices, Ivy springs into action to
-    assist in narrowing and picking the right string from a vast number of
-    choices."
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ivy
+  (use-package avy
+    :ensure t
+    :bind
+    (("C-:"   . avy-goto-char)     ;; Quickly jump to a character
+     ("C-'"   . avy-goto-char-2)   ;; Quickly jump to a sequence of two characters
+     ("M-g f" . avy-goto-line)     ;; Quickly jump to a line
+     ("M-g w" . avy-goto-word-1))  ;; Quickly jump to the beginning of a word
     :config
-    (ivy-mode t))    
+    (setq avy-background t)        ;; Dim background during selection
+    (setq avy-style 'at-full))     ;; Highlight style for avy (e.g., 'at-full', 'at', etc.)
 #+END_SRC
 
-*** Access to shared files
+*** ace-window
 
-    Set the base path for my pCloud drive, regardless of the platform we're on.
+Keybindings to easily and intuitively switch windows.
+
+| Key | Action                                       |
+|-----+----------------------------------------------|
+| x   | Delete window                                |
+| m   | Swap windows                                 |
+| M   | Move window                                  |
+| c   | Copy window                                  |
+| j   | Select buffer                                |
+| n   | Select the previous window                   |
+| u   | Select buffer in the other window            |
+| c   | Split window fairly, vertically/horizontally |
+| v   | Split window vertically                      |
+| b   | Split window horizontally                    |
+| o   | Maximize current window                      |
+| ?   | Show these command bindings                  |
 
 #+BEGIN_SRC emacs-lisp
-  (setq PCLOUD
-      (file-name-as-directory
-       (cond
-        ((eq system-type 'windows-nt) "P:/Shared")
-        ((eq system-type 'darwin) "~/pCloud Drive")
-        (t "~/pCloudDrive"))))
+  (use-package ace-window
+    :ensure t
+    :bind (("M-o" . ace-window)))
 #+END_SRC
 
-** Common packages
+*** ace-isearch
 
-*** yasnippet
+Refer to windows by number.
 
-[[https://github.com/capitaomorte/yasnippet/blob/master/README.mdown][yasnippet]] is a templating system for Emacs.
+| M-o <num>         | Jump to window <num>            |
+| C-u M-o <num>     | Switch current window and <num> |
+| C-u C-u M-o <num> | Delete window <num>             |
+
+I prefer M-o x for delete, M-o w for swap, 
+
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package ace-isearch
+  ;;   :ensure t
+  ;;   :init
+  ;;   (setq enable-recursive-minibuffers t)
+  ;;   (minibuffer-depth-indicate-mode 1)
+  ;;   :bind (("M-o" . ace-window)))
+#+END_SRC
 
 *** undo-tree
 
@@ -265,794 +169,19 @@ up and down arrow keys.
        (setq undo-tree-visualizer-diff t)))
  #+END_SRC
 
-*** bm (visual bookmarks)
-
-Leave visual bookmarks in your code via [[https://github.com/joodland/bm][bm]]. The keybindings listed here are
-those of ... Visual Studio.
+** The rest
 
 #+BEGIN_SRC emacs-lisp
-  (use-package bm
-    :ensure t
-    :init
-    (progn
-      (global-set-key (kbd "<C-f2>") 'bm-toggle)
-      (global-set-key (kbd "<f2>")   'bm-next)
-      (global-set-key (kbd "<S-f2>") 'bm-previous)
-      ;; Click on fringe to toggle bookmarks, and use mouse wheel to move between them.
-      (global-set-key (kbd "<left-fringe> <mouse-5>") 'bm-next-mouse)
-      (global-set-key (kbd "<left-fringe> <mouse-4>") 'bm-previous-mouse)
-      (global-set-key (kbd "<left-fringe> <mouse-1>") 'bm-toggle-mouse)
-      (setq bm-in-lifo-order t)
-      (setq temporary-bookmark-p t)))
-#+END_SRC
+  (setq emacs-config-files '("theme.org"
+                             "org-mode.org"
+                             "coding.org"))
 
-*** ace-isearch
-
-Refer to windows by number.
-
-| M-o <num>         | Jump to window <num>            |
-| C-u M-o <num>     | Switch current window and <num> |
-| C-u C-u M-o <num> | Delete window <num>             |
-
-I prefer M-o x for delete, M-o w for swap, 
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ace-isearch
-    :ensure t
-    :init
-    (setq enable-recursive-minibuffers t)
-    (minibuffer-depth-indicate-mode 1)
-    :bind (("M-o" . ace-window)))
-#+END_SRC
-
-*** Hungry delete
-
-Delete all whitespace with one stroke of backspace.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package hungry-delete
-    :ensure t)
-#+END_SRC
-
-*** deft
-
-    Deft is an Emacs mode for quickly browsing, filtering, and editing
-    directories of plain text notes.
-
-#+BEGIN_SRC emacs-lisp :results silent
-  (use-package deft
-    :ensure t
-    :bind ("<f8>" . deft)
-    :init (setq deft-directory "~/src/jvkersch/notes"
-		deft-extensions '("org" "md")
-		deft-use-filename-as-title t))
-
-  (use-package zetteldeft
-    :after deft
-    :config
-      (zetteldeft-set-classic-keybindings))
+  (dolist (file emacs-config-files)
+    (org-babel-load-file
+     (file-truename
+      (expand-file-name file user-emacs-directory))))
 #+END_SRC
 
 
-*** nov.el
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-#+END_SRC
 
-*** BookMark+
 
-    [[https://www.emacswiki.org/emacs/BookmarkPlus][BookMark+]] has to be downloaded manually from the Emacs wiki.
-
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/bookmark+")
-  (require 'bookmark+)
-#+END_SRC
-
-* Color themes
-
-Make code blocks in Org-mode stand out from the rest of the text. I stole this
-from [[https://github.com/howardabrams/dot-files/blob/master/emacs-mac.org][Howard Abrams]].
-
-#+BEGIN_SRC emacs-lisp
-(defun jvk/org-src-color-blocks-light ()
-  "Colors the block headers and footers to make them stand out more for lighter themes"
-  (interactive)
-  (set-face-attribute 'org-block-begin-line nil
-     :underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")
-  (set-face-attribute 'org-block nil :background "#FFFFEA")
-  (set-face-attribute 'org-block-end-line nil
-     :overline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")
-  (set-face-attribute 'mode-line-buffer-id nil :foreground "#005000" :bold t))
-
-(defun ha/org-src-color-blocks-light ()
-  "Colors the block headers and footers to make them stand out more for lighter themes"
-  (interactive)
-  (custom-set-faces
-   '(org-block-begin-line
-    ((t (:underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF"))))
-   '(org-block-background
-     ((t (:background "#FFFFEA"))))
-   '(org-block
-     ((t (:background "#FFFFEA"))))
-   '(org-block-end-line
-     ((t (:overline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF"))))
-
-   '(mode-line-buffer-id ((t (:foreground "#005000" :bold t))))
-   '(which-func ((t (:foreground "#008000"))))))
-
-(defun ha/org-src-color-blocks-dark ()
-  "Colors the block headers and footers to make them stand out more for dark themes"
-  (interactive)
-  (custom-set-faces
-   '(org-block-begin-line
-     ((t (:foreground "#008ED1" :background "#002E41"))))
-   '(org-block-background
-     ((t (:background "#444444"))))
-   '(org-block-end-line
-     ((t (:foreground "#008ED1" :background "#002E41"))))
-
-   '(mode-line-buffer-id ((t (:foreground "black" :bold t))))
-   '(which-func ((t (:foreground "green"))))))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(setq custom-safe-themes t)
-(defun jvk/change-theme (theme org-block-style)
-  "Change the color scheme"
-  (funcall theme)
-  (funcall org-block-style))
-
-(defun jvk/dark-color-theme ()
-  "Switch to dark color theme"
-  (interactive)
-  (jvk/change-theme 'color-theme-sanityinc-tomorrow-night
-                    'ha/org-src-color-blocks-dark))
-
-(defun jvk/light-color-theme ()
-  "Switch to light color theme"
-  (interactive)
-  (jvk/change-theme 'color-theme-sanityinc-tomorrow-day
-                    'jvk/org-src-color-blocks-light))
-
-;(jvk/dark-color-theme)
-;(jvk/light-color-theme)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "~/src/nano-emacs")
-
-(setq nano-font-family-monospaced "Roboto Mono")
-(setq nano-font-family-proportional "Fira Sans")
-(setq nano-font-size 14)
-
-(require 'nano-base-colors)
-(require 'nano-faces)
-(nano-faces)
-(require 'nano-theme)
-(nano-theme)
-
-(require 'nano-theme-light)
-
-(require 'nano-modeline)
-#+END_SRC
-
-Override some nano fonts.
-
-#+BEGIN_SRC emacs-lisp
-(defface nano-face-popout-reverse
-  '((t (:inverse-video t :inherit nano-face-popout)))
-  "Face for reverse-video highlights"
-  :group 'custom)
-
-(set-face 'show-paren-match 'nano-face-popout-reverse)
-#+END_SRC
-
-* Org-mode
-
-
-** Basic Org customization
-
-#+BEGIN_SRC emacs-lisp
-(setq org-adapt-indentation t)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-    (add-hook 'org-mode-hook
-              (lambda ()
-                (setq-default indent-tabs-mode nil)))
-
-    (setq org-directory
-        (file-name-as-directory "~/Dropbox/org-documents"))
-
-    (global-set-key "\C-cl" 'org-store-link)
-    (global-set-key "\C-ca" 'org-agenda)
-    (global-set-key "\C-cc" 'org-capture)
-    (global-set-key "\C-cb" 'org-switchb)
-
-    (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-
-    (setq org-tags-column -90)
-    (setq org-src-fontify-natively t)
-#+END_SRC
-
-
-** org-todo
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-log-done t)
-
-  ; org clock mode.
-  (setq org-clock-persist 'history)
-  (org-clock-persistence-insinuate)
-
-  (setq org-todo-keywords
-        '((sequence "TODO" "IN-PROGRESS" "PENDING" "|" "DONE" "CANCELLED")))
-
-
-  (setq org-todo-keyword-faces
-      '(("TODO" :foreground "red")
-        ("IN-PROGRESS" . (:foreground "orange" :weight bold))
-        ("NEXT" . (:foreground "lightblue" :weight bold))
-        ("WAITING" . (:foreground "yellow" :weight bold))
-        ("DONE" :foreground "green")))
-
-#+END_SRC
-
-
-** org-agenda
-
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-files
-      (mapcar 'file-truename (list org-directory)))
-#+END_SRC
-
-Adapted from [[https://www.labri.fr/perso/nrougier/GTD/index.html][Get Things Done with Emacs (Nicolas Rougier)]].
-
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-custom-commands
-      '(("g" "Get Things Done (GTD)"
-         ((agenda ""
-                  ((org-agenda-span 'day)
-                   (org-deadline-warning-days 0)))
-          (agenda nil
-                  ((org-agenda-entry-types '(:deadline))
-                   (org-agenda-format-date "")
-                   (org-deadline-warning-days 7)
-                   (org-agenda-overriding-header "\nDeadlines")))
-          (todo "NEXT"
-                ((org-agenda-skip-function
-                  '(org-agenda-skip-entry-if 'deadline))
-                 (org-agenda-prefix-format "  %i %-12:c [%e] ")
-                 (org-agenda-overriding-header "\nTasks\n")))
-          (tags-todo "inbox"
-                     ((org-agenda-prefix-format "  %?-12t% s")
-                      (org-agenda-overriding-header "\nInbox\n")))
-          (tags "CLOSED>=\"<today>\""
-                ((org-agenda-overriding-header "\nCompleted today\n")))))
-        ("n" "Next tasks"
-         ((todo "NEXT"
-                ((org-agenda-overriding-header "\nTasks\n")))))
-        ("d" "Deadlines"
-         ((agenda nil
-                  ((org-deadline-warning-days 7)
-                   (org-agenda-entry-types '(:deadline))))))))
-#+END_SRC
-
-
-** org-babel
-
-#+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((shell . t)
-   (python . t)
-   (R . t)
-   (ruby . t)
-   (sqlite . t)
-   (perl . t)))
-#+END_SRC
-
-
-** org-bullets
-
-Show org-mode bullets as UTF-8 characters.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-bullets
-    :ensure t
-    :hook (org-mode . org-bullets-mode))
-#+END_SRC
-
-
-** org-download
-
-Allows for easy saving of file resources (mostly images) to org
-directories. The ~org-download-method~ customization is taken directly from the
-[[https://coldnew.github.io/hexo-org-example/2018/05/22/use-org-download-to-drag-image-to-emacs/][coldnew]] blog (I've only changed the name to make it fit my naming scheme
-better).
-
-#+BEGIN_SRC emacs-lisp
-  (defun jvk/org-download-method (link)
-    "Provide file location to store resources."
-    (let ((filename
-	   (file-name-nondirectory
-	    (car (url-path-and-query
-		  (url-generic-parse-url link)))))
-	  (dirname (file-name-sans-extension (buffer-name)) ))
-      (unless (file-exists-p dirname)
-	(make-directory dirname))
-      (message "Saving file '%s' to directory '%s'..." filename dirname)
-      (expand-file-name filename dirname)))
-
-  (use-package org-download
-    :ensure t
-    :init
-    (setq org-download-method 'jvk/org-download-method))
-#+END_SRC
-
-** Refile targets
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-refile-targets '((nil :maxlevel . 9)
-                             (org-agenda-files :maxlevel . 9)))
-  (setq org-outline-path-complete-in-steps nil)
-  (setq org-refile-use-outline-path 'file)
-#+END_SRC
-
-** org-capture
-
-#+BEGIN_SRC emacs-lisp
-  (setq jvk/gtd-file (concat org-directory "gtd.org"))
-  (setq org-default-notes-file (concat org-directory "inbox.org"))
-
-  (setq org-capture-templates
-        '(("t" "Todo" entry (file+headline org-default-notes-file "Tasks")
-           "** TODO %?")
-          ("n" "Note" item (file+headline org-default-notes-file "Notes")
-           "%?")
-          ("w" "Waiting for" item (file+headline org-default-notes-file "Waiting for")
-           "%?")
-          ("c" "Communication" item (file+headline org-default-notes-file "Communications to make")
-           "%?")))
-#+END_SRC
-
-** org-download
-
-#+BEGIN_SRC emacs-lisp   
-  (use-package org-download
-    :ensure t
-    :after org
-    :defer nil
-    :config
-    (setq org-download-timestamp "%Y%m%d-%H%M%S_")
-    (setq org-image-actual-width 300))
-#+END_SRC
-
-
-** org-journal
-
-   Default keybindings:
-
-   - C-c C-f - go to the next journal file.
-   - C-c C-b - go to the previous journal file.
-   - C-c C-j - insert a new entry into the current journal file (creates the file if not present).
-   - C-c C-s - search the journal for a string.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-journal
-    :ensure t
-    :init
-    ;; Change default prefix key; needs to be set before loading org-journal
-    (setq org-journal-prefix-key "C-c j ")
-    :config
-    (setq org-journal-dir (concat org-directory "journal"))
-    (setq org-journal-file-format "%Y-%m-%d.org"))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-roam
-  :ensure t
-  :init
-  (setq org-roam-v2-ack t)
-  :custom
-  (org-roam-directory "~/src/jvkersch/org-notes")
-  (org-roam-dailies-directory "journals/")
-  (org-roam-capture-templates
-   '(("d" "default" plain
-      "%?" :target
-      (file+head "pages/${slug}.org" "#+title: ${title}\n"))))
-  (org-roam-completion-everywhere t)
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n i" . org-roam-node-insert)
-         :map org-mode-map
-         ("C-M-i"    . completion-at-point))
-  :config
-  (org-roam-setup))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (load-library "org-roam-ui")
-#+END_SRC
-
-Prevent org-roam-ui from showing citations of papers as pseudo-nodes in the
-graph.
-
-#+BEGIN_SRC emacs-lisp
-  (defun org-roam-ui--filter-citations (links)
-  "Filter out the citations from LINKS."
-  nil)
-#+END_SRC
-
-** Interaction with Zotero
-
-   Open Zotero links (generated with [[https://github.com/wshanks/Zutilo][Zutilo]]).
-   
-#+BEGIN_SRC emacs-lisp
-(defun zotero-open (zotero-link)
-  (start-process "zotero_open" nil "open" (concat "zotero:" zotero-link)))
-
-(org-link-set-parameters "zotero" :follow #'zotero-open)   
-#+END_SRC
-
-** org-cite
-
-   Configuration adapted from:
-
-   - [[https://kristofferbalintona.me/posts/202206141852/]]
-   - [[https://blog.tecosaur.com/tmio/2021-07-31-citations.html]]
-   
-#+BEGIN_SRC emacs-lisp
-  (require 'oc-csl)
-  (setq org-cite-global-bibliography '("~/Dropbox/org-documents/references.bib"))
-  (setq org-cite-export-processors
-        '((latex . biblatex)                               
-          (t . (csl "harvard-cite-them-right.csl"))))
-
-  (setq org-cite-csl-styles-dir
-        (expand-file-name "~/Zotero/styles/"))
-
-  ;; (use-package citar
-  ;;   :no-require
-  ;;   :custom
-  ;;   (citar-bibliography '("~/Dropbox/org-documents/references.bib"))
-  ;;   (org-cite-insert-processor 'citar)
-  ;;   (org-cite-follow-processor 'citar)
-  ;;   (org-cite-activate-processor 'citar)
-  ;;   (citar-bibliography org-cite-global-bibliography)
-  ;;   ;; optional: org-cite-insert is also bound to C-c C-x C-@
-  ;;   :bind
-  ;;   (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
-
-#+END_SRC
-
-** Miscellaneous customizations for org-mode
-
-#+BEGIN_SRC emacs-lisp
-(defun gtd ()
-  "Open GTD buffer"
-  (interactive)
-  (find-file jvk/gtd-file))
-#+END_SRC
-
-
-** Structured notetaking with org-mode (in progress)
-
-#+BEGIN_SRC emacs-lisp
-(defvar jvk/zettel-base-directory
-  (expand-file-name "~/src/jvkersch/notes"))
-
-;; Adapted from org-roam (https://github.com/jethrokuan/org-roam)
-(defun org-roam--extract-global-props (props)
-  "Extract PROPS from the current org buffer.
-The search terminates when the first property is encountered."
-  (let ((buf (org-element-parse-buffer))
-        res)
-    (dolist (prop props)
-      (let ((p (org-element-map buf 'keyword
-                 (lambda (kw)
-                   (when (string= (org-element-property :key kw) prop)
-                     (org-element-property :value kw)))
-                 :first-match t)))
-        (push (cons prop p) res)))
-    res))
-
-(defun jvk/extract-title ()
-  (interactive)
-  "Extract the TITLE property from the current org buffer."
-    (let ((props (org-roam--extract-global-props '("TITLE"))))
-      (cdr (assoc "TITLE" props))))
-
-(defun jvk/extract-title-from-org-file (org-fname)
-  (interactive)
-  "Extract the TITLE property from a given org buffer."
-  (with-temp-buffer
-    (insert-file-contents org-fname)
-    (jvk/extract-title)))
-
-(defun jvk/capture-org-title ()
-  (interactive)
-  "Copy the TITLE of the current org buffer to the kill ring."
-  (let ((title (jvk/extract-title)))
-    (if title
-        (kill-new title)
-      (error "No TITLE property found in current buffer."))))
-
-(defun isodate ()
-  (interactive)
-  (format-time-string "%Y-%m-%d"))
-
-(defun jvk/create-new-zettel ()
-  (interactive)
-  (let* ((zettel-base-name
-          (read-string "Enter zettel name: " (format "%s-" (isodate))))
-         (zettel-path
-          (concat (file-name-as-directory jvk/zettel-base-directory)
-                  zettel-base-name)))
-    (find-file zettel-path)))
-#+END_SRC
-
-
-* Coding modes
-
-** XYZ
-
-#+BEGIN_SRC emacs-lisp   
-  (use-package lsp-mode
-    :init
-    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-    (setq lsp-keymap-prefix "C-c l")
-    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-           (python-mode . lsp)
-           (julia-mode . lsp)
-           ;; if you want which-key integration
-           (lsp-mode . lsp-enable-which-key-integration))
-    :commands lsp)
-
-  ;; optionally
-  (use-package lsp-ui :commands lsp-ui-mode)
-
-  (use-package lsp-julia
-    :config
-    (setq lsp-julia-default-environment "~/.julia/environments/v1.8"))
-#+END_SRC
-
-
-** quarto
-
-#+BEGIN_SRC emacs-lisp
-(use-package quarto-mode
-   :mode (("\\.Rmd" . poly-quarto-mode)))
-#+END_SRC   
-
-** AucTeX
-
-   Adapted from [[https://github.com/jwiegley/use-package/issues/379#issuecomment-246161500][use-package#379]].
-
-#+BEGIN_SRC emacs-lisp
-  (use-package latex
-    :defer auctex
-    :config
-    (setq TeX-auto-save t)
-    (setq TeX-parse-self t)
-
-    (push
-     '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
-       :help "Run latexmk on file")
-     TeX-command-list)
-    (setq TeX-command-default "latexmk")
-    (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
-    (setq TeX-view-program-list
-      '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))))
-#+END_SRC
-
-
-** Terraform scripts
-
-Open Terraform scripts (.tf) in HCL mode
-
-#+BEGIN_SRC emacs-lisp
-  (use-package hcl-mode
-    :ensure t
-    :mode (("\\.tf" . hcl-mode)))
-#+END_SRC
-
-
-** C/C++ mode
-
-#+BEGIN_SRC emacs-lisp
-(defun c-hook ()
-  "Styling for C and C++ modes."
-  (c-toggle-auto-hungry-state t)
-  (c-set-style "stroustrup")
-  (setq c-basic-offset 4)
-  (c-set-offset 'substatement-open 0)
-  (c-set-offset 'inline-open 0))
-
-(add-hook 'c-mode-hook   'c-hook)
-(add-hook 'c++-mode-hook 'c-hook)
-
-(c-set-offset 'innamespace 0)
-#+END_SRC
-
-Display .mod files (ngspice circuit files) in C mode.
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list
-  'auto-mode-alist
-  '("\\.mod$" . c-mode))
-#+END_SRC
-
-
-** Shell scripts
-
-Needs shellcheck to be installed.
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'sh-mode-hook 'flycheck-mode)
-#+END_SRC
-
-
-** Magit
-
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-g M-s") 'magit-status)
-(global-set-key (kbd "M-g M-c") 'magit-checkout)
-#+END_SRC
-
-Show commit SHA in blame mode.
-
-#+BEGIN_SRC emacs-lisp
-(setq magit-blame-heading-format "%-20a %C %s %H")
-#+END_SRC
-
-
-** Cython mode
-
-Open Sage Cython files (.spyx) as well as regular Cython/Pyrex files (.pyx) in
-cython mode.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package cython-mode
-    :ensure t
-    :mode (("\\.spyx" . cython-mode)
-	   ("\\.pyx" . cython-mode)))
-#+END_SRC
-
-
-** Unix files
-
-Not coding per se, but use [[https://wiki.archlinux.org/index.php/emacs#Syntax_Highlighting_for_Systemd_Files][syntax highlighting for Unix system files]].
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.service\\'" . conf-unix-mode))
-(add-to-list 'auto-mode-alist '("\\.timer\\'" . conf-unix-mode))
-(add-to-list 'auto-mode-alist '("\\.target\\'" . conf-unix-mode))
-(add-to-list 'auto-mode-alist '("\\.mount\\'" . conf-unix-mode))
-(add-to-list 'auto-mode-alist '("\\.automount\\'" . conf-unix-mode))
-(add-to-list 'auto-mode-alist '("\\.slice\\'" . conf-unix-mode))
-(add-to-list 'auto-mode-alist '("\\.socket\\'" . conf-unix-mode))
-(add-to-list 'auto-mode-alist '("\\.path\\'" . conf-unix-mode))
-#+END_SRC
-
-
-** Python
-
-   C-c C-c: send file to interpreter
-   
-#+BEGIN_SRC emacs-lisp
-  ;;; Python-specific customizations.
-  (add-hook 'python-mode-hook     'flycheck-mode)
-  (add-hook 'python-mode-hook     'python-docstring-mode)
-  
-(setenv "WORKON_HOME" "~/miniforge3/envs/")
-
-  (use-package elpy
-    :ensure t
-    :init
-    (elpy-enable))
-
-  (use-package python-black
-    :ensure t
-    :after python
-    :hook (python-mode . python-black-on-save-mode-enable-dwim))
-
-  ; Added #: to the fill regexp to reflow Python comments that have #: as the
-  ; comment marker (e.g. traits docstrings)
-  (defun adjust-adaptive-fill-regexp ()
-    (interactive)
-    (setq adaptive-fill-regexp
-          (purecopy "[ \t]*\\([-–!|#%;>*·•‣⁃◦]+:?[ \t]*\\)*")))
-  (add-hook 'python-mode-hook 'adjust-adaptive-fill-regexp)
-
-#+END_SRC
-
-Taken from [[[https://bitbucket.org/durin42/nosemacs]]].
-
-#+BEGIN_SRC emacs-lisp
-  ;; (require 'nose)
-  ;; (add-hook 'python-mode-hook
-  ;;           (lambda ()
-  ;;             (local-set-key "\C-ca" 'nosetests-all)
-  ;;             (local-set-key "\C-cm" 'nosetests-module)
-  ;;             (local-set-key "\C-co" 'nosetests-one)
-  ;;             (local-set-key "\C-cpa" 'nosetests-pdb-all)
-  ;;             (local-set-key "\C-cpm" 'nosetests-pdb-module)
-  ;;             (local-set-key "\C-cpo" 'nosetests-pdb-one)))
-#+END_SRC
-
-
-** Haskell
-
-#+BEGIN_SRC emacs-lisp
-;; Haskell mode
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-#+END_SRC
-
-
-** Golang
-
-#+BEGIN_SRC emacs-lisp
-;; Golang
-;;(require 'go-mode)
-(add-hook 'go-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook 'gofmt-before-save)
-            (setq tab-width 4)
-            (setq indent-tabs-mode 1)))
-#+END_SRC
-
-** Rust
-
-#+BEGIN_SRC emacs-lisp
-(use-package rustic
-  :ensure
-  :bind (:map rustic-mode-map
-              ("M-j" . lsp-ui-imenu)
-              ("M-?" . lsp-find-references)
-              ("C-c C-c l" . flycheck-list-errors)
-              ("C-c C-c a" . lsp-execute-code-action)
-              ("C-c C-c r" . lsp-rename)
-              ("C-c C-c q" . lsp-workspace-restart)
-              ("C-c C-c Q" . lsp-workspace-shutdown)
-              ("C-c C-c s" . lsp-rust-analyzer-status))
-  :config
-  ;; uncomment for less flashiness
-  ;; (setq lsp-eldoc-hook nil)
-  ;; (setq lsp-enable-symbol-highlighting nil)
-  ;; (setq lsp-signature-auto-activate nil)
-
-  ;; comment to disable rustfmt on save
-  (setq rustic-format-on-save t)
-  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
-
-(defun rk/rustic-mode-hook ()
-  ;; so that run C-c C-c C-r works without having to confirm, but don't try to
-  ;; save rust buffers that are not file visiting. Once
-  ;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
-  ;; no longer be necessary.
-  (when buffer-file-name
-    (setq-local buffer-save-without-query t)))
-#+END_SRC
-
-* Useful elisp snippets.
-
-Rename buffer and the file that it's visiting.
-
-#+BEGIN_SRC emacs-lisp
-(defun rename-file-and-buffer (new-name)
-  "Renames both current buffer and file it's visiting to NEW-NAME."
-  (interactive "sNew name: ")
-  (let ((name (buffer-name))
-        (filename (buffer-file-name)))
-    (if (not filename)
-        (message "Buffer '%s' is not visiting a file!" name)
-      (if (get-buffer new-name)
-          (message "A buffer named '%s' already exists!" new-name)
-        (progn
-          (rename-file name new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil))))))
-#+END_SRC
