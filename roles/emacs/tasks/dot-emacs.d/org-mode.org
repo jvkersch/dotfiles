@@ -1,0 +1,420 @@
+#+TITLE: Org-mode configuration
+#+AUTHOR: Joris Vankerschaver
+#+EMAIL: joris.vankerschaver@gmail.com
+#+STARTUP: showall
+
+
+* Org-mode
+
+
+** Basic Org customization
+
+#+BEGIN_SRC emacs-lisp
+(setq org-adapt-indentation nil)
+(setq org-preserve-indentation t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+    (add-hook 'org-mode-hook
+              (lambda ()
+                (setq-default indent-tabs-mode nil)))
+
+    (setq org-directory
+        (file-name-as-directory "~/Dropbox/org-documents"))
+
+    (global-set-key "\C-cl" 'org-store-link)
+    (global-set-key "\C-ca" 'org-agenda)
+    (global-set-key "\C-cc" 'org-capture)
+    (global-set-key "\C-cb" 'org-switchb)
+
+    (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+
+    (setq org-tags-column -90)
+    (setq org-src-fontify-natively t)
+#+END_SRC
+
+
+** org-todo
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-log-done t)
+
+  ; org clock mode.
+  (setq org-clock-persist 'history)
+  (org-clock-persistence-insinuate)
+
+  (setq org-todo-keywords
+        '((sequence "TODO" "IN-PROGRESS" "PENDING" "|" "DONE" "CANCELLED")))
+
+
+(setq org-todo-keyword-faces
+      '(("TODO" :foreground "dodgerblue2" :weight bold)
+        ("IN-PROGRESS" . (:foreground "red" :weight bold))
+        ("NEXT" . (:foreground "orange" :weight bold))
+        ("WAITING" . (:foreground "yellow" :weight bold))
+        ("DONE" :foreground "gray")))
+#+END_SRC
+
+
+** org-agenda
+
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-files
+      (mapcar 'file-truename (list org-directory)))
+#+END_SRC
+
+Adapted from [[https://www.labri.fr/perso/nrougier/GTD/index.html][Get Things Done with Emacs (Nicolas Rougier)]].
+
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-custom-commands
+      '(("g" "Get Things Done (GTD)"
+         ((agenda ""
+                  ((org-agenda-span 'day)
+                   (org-deadline-warning-days 0)))
+          (agenda nil
+                  ((org-agenda-entry-types '(:deadline))
+                   ;;(org-agenda-format-date "")
+                   (org-agenda-overriding-header "\nDeadlines")))
+          (todo "IN-PROGRESS"
+                ((org-agenda-skip-function
+                  '(org-agenda-skip-entry-if 'deadline))
+                 (org-agenda-overriding-header "\nIn progress\n")))
+          (tags-todo "inbox"
+                     ((org-agenda-prefix-format "  %?-12t% s")
+                      (org-agenda-overriding-header "\nInbox\n")))
+          (tags "CLOSED>=\"<today>\""
+                ((org-agenda-overriding-header "\nCompleted today\n")))))
+        ("n" "Next tasks"
+         ((todo "NEXT"
+                ((org-agenda-overriding-header "\nTasks\n")))))
+        ("p" "In progress"
+         ((todo "IN-PROGRESS"
+                ((org-agenda-overriding-header "\nIn progress\n")))))
+        ("d" "Deadlines"
+         ((agenda nil
+                  ((org-deadline-warning-days 7)))))))
+                   
+#+END_SRC
+
+
+** org-babel
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((shell . t)
+   (python . t)
+   (R . t)
+   (ruby . t)
+   (sqlite . t)
+   (perl . t)))
+#+END_SRC
+
+
+** org-bullets
+
+Show org-mode bullets as UTF-8 characters.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :hook (org-mode . org-bullets-mode))
+#+END_SRC
+
+
+** org-download
+
+Allows for easy saving of file resources (mostly images) to org
+directories. The ~org-download-method~ customization is taken directly from the
+[[https://coldnew.github.io/hexo-org-example/2018/05/22/use-org-download-to-drag-image-to-emacs/][coldnew]] blog (I've only changed the name to make it fit my naming scheme
+better).
+
+#+BEGIN_SRC emacs-lisp
+  (defun jvk/org-download-method (link)
+    "Provide file location to store resources."
+    (let ((filename
+	   (file-name-nondirectory
+	    (car (url-path-and-query
+		  (url-generic-parse-url link)))))
+	  (dirname (file-name-sans-extension (buffer-name)) ))
+      (unless (file-exists-p dirname)
+	(make-directory dirname))
+      (message "Saving file '%s' to directory '%s'..." filename dirname)
+      (expand-file-name filename dirname)))
+
+  (use-package org-download
+    :ensure t
+    :init
+    (setq org-download-method 'jvk/org-download-method))
+#+END_SRC
+
+** Refile targets
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-refile-targets '((nil :maxlevel . 9)
+                             (org-agenda-files :maxlevel . 9)))
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-use-outline-path 'file)
+#+END_SRC
+
+** org-capture
+
+#+BEGIN_SRC emacs-lisp
+  (setq jvk/gtd-file (concat org-directory "gtd.org"))
+  (setq org-default-notes-file (concat org-directory "inbox.org"))
+
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline org-default-notes-file "Tasks")
+           "** TODO %?")
+          ("n" "Note" item (file+headline org-default-notes-file "Notes")
+           "%?")
+          ("w" "Waiting for" item (file+headline org-default-notes-file "Waiting for")
+           "%?")
+          ("c" "Communication" item (file+headline org-default-notes-file "Communications to make")
+           "%?")))
+#+END_SRC
+
+** org-download
+
+#+BEGIN_SRC emacs-lisp   
+  (use-package org-download
+    :ensure t
+    :after org
+    :defer nil
+    :config
+    (setq org-download-timestamp "%Y%m%d-%H%M%S_")
+    (setq org-image-actual-width 300))
+#+END_SRC
+
+
+** org-journal
+
+   Default keybindings:
+
+   - C-c C-f - go to the next journal file.
+   - C-c C-b - go to the previous journal file.
+   - C-c C-j - insert a new entry into the current journal file (creates the file if not present).
+   - C-c C-s - search the journal for a string.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-journal
+    :ensure t
+    :init
+    ;; Change default prefix key; needs to be set before loading org-journal
+    (setq org-journal-prefix-key "C-c j ")
+    :config
+    (setq org-journal-dir (concat org-directory "journal"))
+    (setq org-journal-file-format "%Y-%m-%d.org"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-roam
+    :ensure t
+    :init
+    (setq org-roam-v2-ack t)
+    :after (org emacsql-sqlite-builtin)
+    :custom
+    (org-roam-directory "~/src/jvkersch/org-notes/pages")
+    (org-roam-dailies-directory "journals/")
+    (org-roam-capture-templates
+     '(("d" "default" plain
+        "%?" :target
+        (file+head "pages/${slug}.org" "#+title: ${title}\n"))))
+    (org-roam-completion-everywhere t)
+    (org-roam-database-connector 'sqlite-builtin)      
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n i" . org-roam-node-insert)
+           :map org-mode-map
+           ("C-M-i"    . completion-at-point))
+    :config
+    (org-roam-setup))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; (load-library "org-roam-ui")
+#+END_SRC
+
+Prevent org-roam-ui from showing citations of papers as pseudo-nodes in the
+graph.
+
+#+BEGIN_SRC emacs-lisp
+  (defun org-roam-ui--filter-citations (links)
+  "Filter out the citations from LINKS."
+  nil)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package consult-org-roam
+   :ensure t
+   :after org-roam
+   :init
+   (require 'consult-org-roam)
+   ;; Activate the minor mode
+   (consult-org-roam-mode 1)
+   :custom
+   ;; Use `ripgrep' for searching with `consult-org-roam-search'
+   (consult-org-roam-grep-func #'consult-ripgrep)
+   ;; Configure a custom narrow key for `consult-buffer'
+   (consult-org-roam-buffer-narrow-key ?r)
+   ;; Display org-roam buffers right after non-org-roam buffers
+   ;; in consult-buffer (and not down at the bottom)
+   (consult-org-roam-buffer-after-buffers t)
+   :config
+   ;; Eventually suppress previewing for certain functions
+   (consult-customize
+    consult-org-roam-forward-links
+    :preview-key (kbd "M-."))
+   :bind
+   ;; Define some convenient keybindings as an addition
+   ("C-c n e" . consult-org-roam-file-find)
+   ("C-c n b" . consult-org-roam-backlinks)
+   ("C-c n l" . consult-org-roam-forward-links)
+   ("C-c n r" . consult-org-roam-search))
+#+END_SRC
+** Interaction with Zotero
+
+   Open Zotero links (generated with [[https://github.com/wshanks/Zutilo][Zutilo]]).
+   
+#+BEGIN_SRC emacs-lisp
+(defun zotero-open (zotero-link)
+  (start-process "zotero_open" nil "open" (concat "zotero:" zotero-link)))
+
+(org-link-set-parameters "zotero" :follow #'zotero-open)   
+#+END_SRC
+
+** org-cite
+
+   Configuration adapted from:
+
+   - [[https://kristofferbalintona.me/posts/202206141852/]]
+   - [[https://blog.tecosaur.com/tmio/2021-07-31-citations.html]]
+   
+#+BEGIN_SRC emacs-lisp
+  (require 'oc-csl)
+  (setq org-cite-global-bibliography '("~/Dropbox/org-documents/references.bib"))
+  (setq org-cite-export-processors
+        '((latex . biblatex)                               
+          (t . (csl "harvard-cite-them-right.csl"))))
+
+  (setq org-cite-csl-styles-dir
+        (expand-file-name "~/Zotero/styles/"))
+
+  ;; (use-package citar
+  ;;   :no-require
+  ;;   :custom
+  ;;   (citar-bibliography '("~/Dropbox/org-documents/references.bib"))
+  ;;   (org-cite-insert-processor 'citar)
+  ;;   (org-cite-follow-processor 'citar)
+  ;;   (org-cite-activate-processor 'citar)
+  ;;   (citar-bibliography org-cite-global-bibliography)
+  ;;   ;; optional: org-cite-insert is also bound to C-c C-x C-@
+  ;;   :bind
+  ;;   (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
+
+#+END_SRC
+
+** Miscellaneous customizations for org-mode
+
+*** GTD entry point
+
+#+BEGIN_SRC emacs-lisp
+(defun gtd ()
+  "Open GTD buffer"
+  (interactive)
+  (find-file jvk/gtd-file))
+#+END_SRC
+
+*** Time tracking for consulting projects
+
+Adapted from https://emacs.stackexchange.com/a/59239. Assumes a
+hierarchy where level 1 is the project name, level 2 is something
+else, and the actual task is on level 3.
+
+#+BEGIN_SRC elisp
+(defun org-dblock-write:monthly (params)
+  (cl-labels ((fmttm (tm)
+                     (format-time-string (org-time-stamp-format t t) tm)))
+    (let ((start (seconds-to-time
+                  (org-matcher-time (plist-get params :tstart))))
+          (end (seconds-to-time
+                (org-matcher-time (plist-get params :tend)))))
+      (while (time-less-p start end)
+        (let* ((next-day (time-add start (date-to-time "1970-01-02T00:00Z")))
+               (entries (seq-filter
+                         (lambda (entry) (= (car entry) 3))
+                         (car (last 
+                               (org-clock-get-table-data
+                                "foo"
+                                (list :maxlevel 3
+                                      :tstart (fmttm start)
+                                      :tend (fmttm next-day))))))))
+          (when (> (length entries) 0)
+            (dolist (entry entries)
+              (insert
+               "|"
+               (format-time-string "%d %a" start)
+               "|"
+               (nth 1 entry)
+               "|"
+               (number-to-string (nth 4 entry))
+               "|\n"))
+            (org-table-align))
+          (setq start next-day))))))
+#+END_SRC
+
+** Structured notetaking with org-mode (in progress)
+
+#+BEGIN_SRC emacs-lisp
+  ;; (defvar jvk/zettel-base-directory
+  ;;   (expand-file-name "~/src/jvkersch/notes"))
+
+  ;; ;; Adapted from org-roam (https://github.com/jethrokuan/org-roam)
+  ;; (defun org-roam--extract-global-props (props)
+  ;;   "Extract PROPS from the current org buffer.
+  ;; The search terminates when the first property is encountered."
+  ;;   (let ((buf (org-element-parse-buffer))
+  ;;         res)
+  ;;     (dolist (prop props)
+  ;;       (let ((p (org-element-map buf 'keyword
+  ;;                  (lambda (kw)
+  ;;                    (when (string= (org-element-property :key kw) prop)
+  ;;                      (org-element-property :value kw)))
+  ;;                  :first-match t)))
+  ;;         (push (cons prop p) res)))
+  ;;     res))
+
+  ;; (defun jvk/extract-title ()
+  ;;   (interactive)
+  ;;   "Extract the TITLE property from the current org buffer."
+  ;;     (let ((props (org-roam--extract-global-props '("TITLE"))))
+  ;;       (cdr (assoc "TITLE" props))))
+
+  ;; (defun jvk/extract-title-from-org-file (org-fname)
+  ;;   (interactive)
+  ;;   "Extract the TITLE property from a given org buffer."
+  ;;   (with-temp-buffer
+  ;;     (insert-file-contents org-fname)
+  ;;     (jvk/extract-title)))
+
+  ;; (defun jvk/capture-org-title ()
+  ;;   (interactive)
+  ;;   "Copy the TITLE of the current org buffer to the kill ring."
+  ;;   (let ((title (jvk/extract-title)))
+  ;;     (if title
+  ;;         (kill-new title)
+  ;;       (error "No TITLE property found in current buffer."))))
+
+  ;; (defun isodate ()
+  ;;   (interactive)
+  ;;   (format-time-string "%Y-%m-%d"))
+
+  ;; (defun jvk/create-new-zettel ()
+  ;;   (interactive)
+  ;;   (let* ((zettel-base-name
+  ;;           (read-string "Enter zettel name: " (format "%s-" (isodate))))
+  ;;          (zettel-path
+  ;;           (concat (file-name-as-directory jvk/zettel-base-directory)
+  ;;                   zettel-base-name)))
+  ;;     (find-file zettel-path)))
+#+END_SRC

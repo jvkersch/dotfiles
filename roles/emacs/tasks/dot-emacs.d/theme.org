@@ -1,0 +1,85 @@
+#+TITLE: Themes and Appearance
+#+AUTHOR: Joris Vankerschaver
+#+EMAIL: joris.vankerschaver@gmail.com
+#+STARTUP: showall
+
+
+* Color themes
+
+Make code blocks in Org-mode stand out from the rest of the text. I stole this
+from [[https://github.com/howardabrams/dot-files/blob/master/emacs-mac.org][Howard Abrams]].
+
+#+BEGIN_SRC emacs-lisp
+(defun jvk/org-src-color-blocks-light ()
+  "Colors the block headers and footers to make them stand out more for lighter themes"
+  (interactive)
+  (set-face-attribute 'org-block-begin-line nil
+     :underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")
+  (set-face-attribute 'org-block nil :background "#FFFFEA")
+  (set-face-attribute 'org-block-end-line nil
+     :overline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")
+  (set-face-attribute 'mode-line-buffer-id nil :foreground "#005000" :bold t))
+
+(defun ha/org-src-color-blocks-light ()
+  "Colors the block headers and footers to make them stand out more for lighter themes"
+  (interactive)
+  (custom-set-faces
+   '(org-block-begin-line
+    ((t (:underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF"))))
+   '(org-block-background
+     ((t (:background "#FFFFEA"))))
+   '(org-block
+     ((t (:background "#FFFFEA"))))
+   '(org-block-end-line
+     ((t (:overline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF"))))
+
+   '(mode-line-buffer-id ((t (:foreground "#005000" :bold t))))
+   '(which-func ((t (:foreground "#008000"))))))
+
+(defun ha/org-src-color-blocks-dark ()
+  "Colors the block headers and footers to make them stand out more for dark themes"
+  (interactive)
+  (custom-set-faces
+   '(org-block-begin-line
+     ((t (:foreground "#008ED1" :background "#002E41"))))
+   '(org-block-background
+     ((t (:background "#444444"))))
+   '(org-block-end-line
+     ((t (:foreground "#008ED1" :background "#002E41"))))
+
+   '(mode-line-buffer-id ((t (:foreground "black" :bold t))))
+   '(which-func ((t (:foreground "green"))))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/src/nano-emacs")
+
+  ;; (setq nano-font-family-monospaced "Roboto Mono")
+  ;; (setq nano-font-family-proportional "Fira Sans")
+  ;; (setq nano-font-size 14)
+  ;; (require 'nano-layout)
+  (require 'nano-faces)
+  (require 'nano-theme)  
+  (require 'nano-theme-light)
+  (require 'nano-theme-dark)
+
+  (nano-theme-set-dark)
+  ;;(nano-theme-set-light)
+  (nano-refresh-theme)
+
+  ;;(require 'nano-defaults)
+  (require 'nano-modeline)
+
+  ;;(require 'nano-compact)
+#+END_SRC
+
+Override some nano fonts.
+
+#+BEGIN_SRC emacs-lisp
+(defface nano-face-popout-reverse
+  '((t (:inverse-video t :inherit nano-face-popout)))
+  "Face for reverse-video highlights"
+  :group 'custom)
+
+(set-face 'show-paren-match 'nano-face-popout-reverse)
+#+END_SRC
