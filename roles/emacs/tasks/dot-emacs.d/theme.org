@@ -64,7 +64,7 @@ from [[https://github.com/howardabrams/dot-files/blob/master/emacs-mac.org][Howa
   (require 'nano-theme-dark)
 
   (nano-theme-set-dark)
-  ;;(nano-theme-set-light)
+  (nano-theme-set-light)
   (nano-refresh-theme)
 
   ;;(require 'nano-defaults)
