@@ -27,6 +27,8 @@
     (global-set-key "\C-cc" 'org-capture)
     (global-set-key "\C-cb" 'org-switchb)
 
+    (define-key org-mode-map "\M-q" 'toggle-truncate-lines)
+
     (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
     (setq org-tags-column -90)
@@ -125,27 +127,45 @@ Show org-mode bullets as UTF-8 characters.
 ** org-download
 
 Allows for easy saving of file resources (mostly images) to org
-directories. The ~org-download-method~ customization is taken directly from the
-[[https://coldnew.github.io/hexo-org-example/2018/05/22/use-org-download-to-drag-image-to-emacs/][coldnew]] blog (I've only changed the name to make it fit my naming scheme
-better).
+directories.
 
 #+BEGIN_SRC emacs-lisp
-  (defun jvk/org-download-method (link)
-    "Provide file location to store resources."
-    (let ((filename
-	   (file-name-nondirectory
-	    (car (url-path-and-query
-		  (url-generic-parse-url link)))))
-	  (dirname (file-name-sans-extension (buffer-name)) ))
-      (unless (file-exists-p dirname)
-	(make-directory dirname))
-      (message "Saving file '%s' to directory '%s'..." filename dirname)
-      (expand-file-name filename dirname)))
-
   (use-package org-download
-    :ensure t
-    :init
-    (setq org-download-method 'jvk/org-download-method))
+  :ensure t
+  :after org
+  :bind
+  (:map org-mode-map
+        (("s-Y" . org-download-screenshot)
+         ("s-y" . org-download-yank)))
+  :custom
+  (org-download-method 'directory)
+  (org-download-image-dir "images")
+  (org-download-heading-lvl nil)
+  (org-download-timestamp "%Y%m%d-%H%M%S_")
+  (org-download-screenshot-method "screencapture -i %s")
+  :config
+  ;; Drag-and-drop to `dired`
+  (add-hook 'dired-mode-hook 'org-download-enable)
+  
+  ;; Auto-insert image after screenshot
+  (setq org-download-annotate-function
+        (lambda (_link) ""))
+  
+  ;; Display images inline after inserting
+  (add-hook 'org-download-after-screenshot-hook
+            (lambda () (org-display-inline-images))))
+#+END_SRC
+
+
+** org-attach
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-attach
+  :after org
+  :config
+  (setq org-attach-id-dir "files/")
+  (setq org-attach-method 'cp)
+  (setq org-attach-dir-relative t))
 #+END_SRC
 
 ** Refile targets
