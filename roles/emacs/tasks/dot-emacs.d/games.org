@@ -1,0 +1,23 @@
+#+TITLE: Games in Emacs
+#+AUTHOR: Joris Vankerschaver
+#+EMAIL: joris.vankerschaver@gmail.com
+#+STARTUP: showall
+
+* 2048
+
+#+BEGIN_SRC elisp
+(use-package 2048-game
+  :ensure t
+  :commands (2048-game)
+  :config
+  (setq 2048-game-score-file "~/.emacs.d/2048-scores"))
+#+END_SRC
+
+* Nethack
+
+Requires a custom build of Nethack and is currently only available for manual install. See [[https://github.com/Feyorsh/nethack-el][nethack-el]] for instructions.
+
+#+BEGIN_SRC elisp
+  (add-to-list 'load-path "~/.emacs.d/src/nethack-el")
+  (require 'nethack)
+#+END_SRC

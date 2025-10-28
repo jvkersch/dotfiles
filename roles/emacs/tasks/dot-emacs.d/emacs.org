@@ -169,12 +169,23 @@ up and down arrow keys.
        (setq undo-tree-visualizer-diff t)))
  #+END_SRC
 
+*** time-zones
+
+Fancy time zones support.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package time-zones
+    :vc (:url "https://github.com/xenodium/time-zones"))
+#+END_SRC
+
 ** The rest
 
 #+BEGIN_SRC emacs-lisp
   (setq emacs-config-files '("theme.org"
                              "org-mode.org"
-                             "coding.org"))
+                             "coding.org"
+                             "genai.org"
+                             "games.org"))
 
   (dolist (file emacs-config-files)
     (org-babel-load-file

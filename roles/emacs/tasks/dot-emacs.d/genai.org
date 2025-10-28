@@ -1,0 +1,10 @@
+#+TITLE: Support for Generative AI
+#+AUTHOR: Joris Vankerschaver
+#+EMAIL: joris.vankerschaver@gmail.com
+#+STARTUP: showall
+
+#+BEGIN_SRC elisp
+(use-package gptel
+  :ensure t
+  :commands (gptel gptel-send gptel-menu))
+#+END_SRC                       
