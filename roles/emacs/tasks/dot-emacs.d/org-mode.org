@@ -57,7 +57,7 @@
       '(("TODO" :foreground "dodgerblue2" :weight bold)
         ("IN-PROGRESS" . (:foreground "red" :weight bold))
         ("NEXT" . (:foreground "orange" :weight bold))
-        ("WAITING" . (:foreground "yellow" :weight bold))
+        ("WAITING" . (:foreground "red" :weight bold))
         ("DONE" :foreground "gray")))
 #+END_SRC
 
