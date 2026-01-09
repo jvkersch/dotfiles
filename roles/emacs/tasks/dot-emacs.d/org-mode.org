@@ -15,22 +15,28 @@
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-    (add-hook 'org-mode-hook
-              (lambda ()
-                (setq-default indent-tabs-mode nil)))
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (setq-default indent-tabs-mode nil)))
 
-    (setq org-directory
+  (add-hook 'org-mode-hook 'visual-line-mode)
+
+  (setq org-directory
         (file-name-as-directory "~/Dropbox/org-documents"))
 
-    (global-set-key "\C-cl" 'org-store-link)
-    (global-set-key "\C-ca" 'org-agenda)
-    (global-set-key "\C-cc" 'org-capture)
-    (global-set-key "\C-cb" 'org-switchb)
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key "\C-cc" 'org-capture)
+  (global-set-key "\C-cb" 'org-switchb)
 
-    (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+  (define-key org-mode-map "\M-q" 'toggle-truncate-lines)
 
-    (setq org-tags-column -90)
-    (setq org-src-fontify-natively t)
+  (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+
+  (setq org-tags-column -90)
+  (setq org-src-fontify-natively t)
+
+  (add-to-list 'org-file-apps '("\\.docx\\'" . "open %s"))
 #+END_SRC
 
 
@@ -51,7 +57,7 @@
       '(("TODO" :foreground "dodgerblue2" :weight bold)
         ("IN-PROGRESS" . (:foreground "red" :weight bold))
         ("NEXT" . (:foreground "orange" :weight bold))
-        ("WAITING" . (:foreground "yellow" :weight bold))
+        ("WAITING" . (:foreground "red" :weight bold))
         ("DONE" :foreground "gray")))
 #+END_SRC
 
@@ -59,41 +65,48 @@
 ** org-agenda
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-files
-      (mapcar 'file-truename (list org-directory)))
+(setq org-agenda-files (apply 'append
+			      (mapcar
+			       (lambda (directory)
+				 (directory-files-recursively
+				  directory org-agenda-file-regexp))
+			       '("~/Dropbox/org-documents" "~/src/jvkersch/memex"))))
 #+END_SRC
 
 Adapted from [[https://www.labri.fr/perso/nrougier/GTD/index.html][Get Things Done with Emacs (Nicolas Rougier)]].
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-custom-commands
-      '(("g" "Get Things Done (GTD)"
-         ((agenda ""
-                  ((org-agenda-span 'day)
-                   (org-deadline-warning-days 0)))
-          (agenda nil
-                  ((org-agenda-entry-types '(:deadline))
-                   ;;(org-agenda-format-date "")
-                   (org-agenda-overriding-header "\nDeadlines")))
-          (todo "IN-PROGRESS"
-                ((org-agenda-skip-function
-                  '(org-agenda-skip-entry-if 'deadline))
-                 (org-agenda-overriding-header "\nIn progress\n")))
-          (tags-todo "inbox"
-                     ((org-agenda-prefix-format "  %?-12t% s")
-                      (org-agenda-overriding-header "\nInbox\n")))
-          (tags "CLOSED>=\"<today>\""
-                ((org-agenda-overriding-header "\nCompleted today\n")))))
-        ("n" "Next tasks"
-         ((todo "NEXT"
-                ((org-agenda-overriding-header "\nTasks\n")))))
-        ("p" "In progress"
-         ((todo "IN-PROGRESS"
-                ((org-agenda-overriding-header "\nIn progress\n")))))
-        ("d" "Deadlines"
-         ((agenda nil
-                  ((org-deadline-warning-days 7)))))))
-                   
+  (setq org-agenda-custom-commands
+        '(("g" "Get Things Done (GTD)"
+           ((agenda ""
+                    ((org-agenda-span 'day)
+                     (org-deadline-warning-days 0)))
+            (agenda nil
+                    ((org-agenda-entry-types '(:deadline))
+                     ;;(org-agenda-format-date "")
+                     (org-agenda-overriding-header "\nDeadlines")))
+            (tags-todo "+TODO={IN-PROGRESS\\|WAITING}"
+                  ((org-agenda-skip-function
+                    '(org-agenda-skip-entry-if 'deadline))
+                   (org-agenda-overriding-header "\nIn progress/Waiting\n")))
+            (tags-todo "inbox"
+                       ((org-agenda-prefix-format "  %?-12t% s")
+                        (org-agenda-overriding-header "\nInbox\n")))
+            (tags "CLOSED>=\"<today>\""
+                  ((org-agenda-overriding-header "\nCompleted today\n")))))
+          ("n" "Next tasks"
+           ((todo "NEXT"
+                  ((org-agenda-overriding-header "\nTasks\n")))))
+          ("w" "In progress or waiting"
+           ((tags-todo "+TODO={IN-PROGRESS\\|WAITING}"
+                   ((org-agenda-overriding-header "\nIn progress/waiting\n")))))
+          ("p" "In progress"
+           ((todo "IN-PROGRESS"
+                  ((org-agenda-overriding-header "\nIn progress\n")))))
+          ("d" "Deadlines"
+           ((agenda nil
+                    ((org-deadline-warning-days 7)))))))
+                     
 #+END_SRC
 
 
@@ -125,27 +138,47 @@ Show org-mode bullets as UTF-8 characters.
 ** org-download
 
 Allows for easy saving of file resources (mostly images) to org
-directories. The ~org-download-method~ customization is taken directly from the
-[[https://coldnew.github.io/hexo-org-example/2018/05/22/use-org-download-to-drag-image-to-emacs/][coldnew]] blog (I've only changed the name to make it fit my naming scheme
-better).
+directories. As a personal reminder, `s-Y` is 
+
 
 #+BEGIN_SRC emacs-lisp
-  (defun jvk/org-download-method (link)
-    "Provide file location to store resources."
-    (let ((filename
-	   (file-name-nondirectory
-	    (car (url-path-and-query
-		  (url-generic-parse-url link)))))
-	  (dirname (file-name-sans-extension (buffer-name)) ))
-      (unless (file-exists-p dirname)
-	(make-directory dirname))
-      (message "Saving file '%s' to directory '%s'..." filename dirname)
-      (expand-file-name filename dirname)))
-
   (use-package org-download
-    :ensure t
-    :init
-    (setq org-download-method 'jvk/org-download-method))
+  :ensure t
+  :after org
+  :bind
+  (:map org-mode-map
+        (("s-Y" . org-download-screenshot)
+         ("s-y" . org-download-yank)))
+  :custom
+  (org-download-method 'directory)
+  (org-download-image-dir "images")
+  (org-download-heading-lvl nil)
+  (org-download-timestamp "%Y%m%d-%H%M%S_")
+  (org-download-screenshot-method "screencapture -i %s")
+  :config
+  ;; Drag-and-drop to `dired`
+  (add-hook 'dired-mode-hook 'org-download-enable)
+  
+  ;; Auto-insert image after screenshot
+  (setq org-download-annotate-function
+        (lambda (_link) ""))
+  
+  ;; Display images inline after inserting
+  (add-hook 'org-download-after-screenshot-hook
+            (lambda () (org-display-inline-images))))
+#+END_SRC
+
+
+** org-attach
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-attach
+        :after org
+        :config
+        (setq org-attach-id-dir "files/")
+        (setq org-attach-method 'cp)
+        (setq org-attach-dir-relative t)
+        (setq org-attach-store-link-p 'attached))
 #+END_SRC
 
 ** Refile targets
@@ -170,8 +203,22 @@ better).
            "%?")
           ("w" "Waiting for" item (file+headline org-default-notes-file "Waiting for")
            "%?")
-          ("c" "Communication" item (file+headline org-default-notes-file "Communications to make")
-           "%?")))
+          ("c" "New contact" entry (file+headline org-default-notes-file "Contacts")
+                  "* %^{Full name}
+:PROPERTIES:
+:EMAIL: %^{Email|}
+:BIRTHDAY: %^{Birthday (YYYY-MM-DD)|}
+:LINKEDIN: %^{LinkedIn URL|}
+:COMPANY: %^{Company|}
+:ROLE: %^{Role|}
+:CITY: %^{City|}
+:COUNTRY: %^{Country|}
+:MET: %<%Y-%m-%d>
+:CONNECTION: %^{Connection|acquaintance|warm|strong|vip}
+:NOTE: %^{Notes|}
+:END:
+- Met at: %^{Where/Context}
+- First conversation: %?")))
 #+END_SRC
 
 ** org-download
@@ -319,10 +366,15 @@ graph.
 *** GTD entry point
 
 #+BEGIN_SRC emacs-lisp
-(defun gtd ()
-  "Open GTD buffer"
-  (interactive)
-  (find-file jvk/gtd-file))
+  (defun gtd ()
+    "Open GTD buffer"
+    (interactive)
+    (find-file jvk/gtd-file))
+
+  (defun memex ()
+    "Open my second brain"
+    (interactive)
+    (dired "~/src/jvkersch/memex"))
 #+END_SRC
 
 *** Time tracking for consulting projects

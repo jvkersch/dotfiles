@@ -169,12 +169,131 @@ up and down arrow keys.
        (setq undo-tree-visualizer-diff t)))
  #+END_SRC
 
+*** time-zones
+
+Fancy time zones support.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package time-zones
+    :vc (:url "https://github.com/xenodium/time-zones"))
+#+END_SRC
+
+#+RESULTS:
+
+*** search
+
+consult-ripgrep, vertico
+
+#+BEGIN_SRC emacs-lisp
+
+    (use-package consult
+      :bind (
+             ("M-s r" . consult-ripgrep)
+             ("M-s l" . consult-line)))
+
+    (use-package vertico
+      :init
+      (vertico-mode))
+
+  (use-package embark
+    :ensure t
+
+    :bind
+    (("C-." . embark-act)         ;; pick some comfortable binding
+     ("C-;" . embark-dwim)        ;; good alternative: M-.
+     ("C-h B" . embark-bindings))) ;; alternative for `describe-bindings'
+
+    
+    (use-package embark-consult
+      :ensure t)
+
+(use-package marginalia
+  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+  ;; available in the *Completions* buffer, add it to the
+  ;; `completion-list-mode-map'.
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+
+  ;; The :init section is always executed.
+  :init
+
+  ;; Marginalia must be activated in the :init section of use-package such that
+  ;; the mode gets enabled right away. Note that this forces loading the
+  ;; package.
+  (marginalia-mode))
+  
+#+END_SRC
+
+** Better line wrapping
+
+#+BEGIN_SRC emacs-lisp
+  (use-package adaptive-wrap
+    :config
+    (adaptive-wrap-prefix-mode))
+#+END_SRC
+
+** SVG tags
+
+#+BEGIN_SRC emacs-lisp
+
+      (defun jvk/svg-make-colored-tag (tag &optional &rest args)
+        (let* ((reverse (or (plist-get args :reverse) nil))
+               (foreground (or (plist-get args :foreground)
+                               (svg-tag--face-attribute 'svg-tag-default-face :foreground)))
+               (background (or (plist-get args :background)
+                               (svg-tag--face-attribute 'svg-tag-default-face :background))))
+          (if reverse
+              (svg-lib-tag tag nil
+                     :stroke 0
+                     :font-weight 'semibold
+                     :foreground background
+                     :background foreground)
+            (svg-lib-tag tag nil
+                   :stroke 2
+                   :font-weight 'regular
+                   :foreground foreground
+                   :background background))))
+
+    (use-package svg-tag-mode
+      :config
+      (setq svg-tag-tags
+        '(("DONE" . ((lambda (tag) (svg-tag-make "DONE" :reverse t))))
+          ("TODO" . ((lambda (tag) (jvk/svg-make-colored-tag "TODO"
+                                                             :foreground "DodgerBlue1" :reverse t))))
+          ("NEXT" . ((lambda (tag) (jvk/svg-make-colored-tag "NEXT" :foreground "orange1" :reverse t))))
+          ("WAITING" . ((lambda (tag) (jvk/svg-make-colored-tag "WAIT" :foreground "OrangeRed" :reverse t))))
+          ("IN-PROGRESS" . ((lambda (tag) (jvk/svg-make-colored-tag "PROG" :foreground "yellow" :background "black" :reverse t)))))))
+
+  ;; workaround to make SVG tags show in the org agenda
+  ;; https://github.com/rougier/svg-tag-mode?tab=readme-ov-file#svg-tags-cannot-render-in-org-agenda
+    
+    (defun org-agenda-show-svg ()
+      (interactive)
+      (let* ((case-fold-search nil)
+             (keywords (mapcar #'svg-tag--build-keywords svg-tag--active-tags))
+             (keyword (car keywords)))
+        (while keyword
+          (save-excursion
+            (while (re-search-forward (nth 0 keyword) nil t)
+              (overlay-put (make-overlay
+                            (match-beginning 0) (match-end 0))
+                           'display  (nth 3 (eval (nth 2 keyword)))) ))
+          (pop keywords)
+          (setq keyword (car keywords)))))
+    (add-hook 'org-agenda-finalize-hook #'org-agenda-show-svg)
+
+
+      
+#+END_SRC
+
 ** The rest
 
 #+BEGIN_SRC emacs-lisp
   (setq emacs-config-files '("theme.org"
                              "org-mode.org"
-                             "coding.org"))
+                             "coding.org"
+                             "genai.org"
+                             "games.org"))
 
   (dolist (file emacs-config-files)
     (org-babel-load-file
